@@ -1,19 +1,18 @@
-client: Contoso
-tenantDomain: contoso.com
+client: Condicio
+tenantDomain: condicio.nl
 configPolicies:
  - bitlocker
  - corporateBranding:
-   - desktopImageUrl: ""
-   - lockscreenImageUrl: "" 
+   - desktopImageUrl: "https://condicio.nl/condicio.png"
+   - lockscreenImageUrl: "https://condicio.nl/condicio.png"
  - deviceRestrictions:
-   - homepageUrl: "https://contoso.com"
+   - homepageUrl: "https://condicio.nl"
  - endpointProtection:
    - corporateMsgTitle: "Welcome to Contoso!"
    - corporateMsgText: "Enter at your own risk..."
 compliancePolicies:
  - bitlocker
 scripts:
- - timezone
  - bitlocker
  - onedrive
  - wallpaperFix

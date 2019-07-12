@@ -7,17 +7,18 @@
     <version>0.9</version>
     <title>Intune Plaster-Build</title>
     <description></description>
-    <author>Ben Reader</author>
+    <author>Condicio</author>
     <tags></tags>
   </metadata>
   <parameters>
-    <parameter name="ClientName" type='text' prompt='Who is the client?' default='Powers-Hell' />
-    <parameter name="ClientDomain" type='text' prompt='What is the client domain name?' default='powers-hell.com' />
+    <parameter name="ClientName" type='text' prompt='Who is the client?' default='Condicio' />
+    <parameter name="ClientDomain" type='text' prompt='What is the client domain name?' default='Condicio.nl' />
 
     <parameter name="ConfigPolicy" type='choice' prompt='Are you setting up configuration policies?' default='1' store='text' >
       <choice label='&amp;Yes' help="Yes." value='true'/>
       <choice label='&amp;No' help="No." value='false'/>
     </parameter>
+    
     <parameter name="confBitlocker" condition="$PLASTER_PARAM_ConfigPolicy -eq 'true'" type='choice' prompt='Bitlocker?' store='text' >
       <choice label='&amp;Yes' help="Yes." value='true'/>
       <choice label='&amp;No' help="No." value='false'/>
