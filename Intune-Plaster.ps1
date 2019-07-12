@@ -1,23 +1,11 @@
-
-
-
-#region Config
-$configPath = "$PSScriptRoot\Intune-Plaster-Build\templates\config-profiles"
-$compPath = "$PSScriptRoot\Intune-Plaster-Build\templates\compliance-policies"
-$scriptPath = "$PSScriptRoot\Intune-Plaster-Build\templates\scripts"
-
-if (Test-Path $configPath) { } else { Write-Error "unable to find the $($configPath)" }
-if (Test-Path $compPath) { } else { Write-Error "unable to find the $($configPath)" }
-if (Test-Path $scriptPath) { } else { Write-Error "unable to find the $($configPath)" }
-
-#endregion
-
-
 $clientId = "514e80b8-f8eb-4dbf-a11e-3d680716473b"
 $tenantId = "c8ce4011-e689-48a2-ba74-46fe334d73ff"
 $clientSecret = 'emH.yXnv/Z-EhRe[PnmAjLBxBs53dS31'
-$resourceURL = "https://graph.microsoft.com"
 
+$token = Get-AuthToken -clientId $clientId -clientSecret $clientSecret -tenantId $tenantId -Authtype Application
+
+$pass = ConvertTo-SecureString "Ehk58HV^3ab@lsp3" -AsPlainText -Force
+$tokenuser = Get-AuthToken -userName "pouyan.graph@condiciocloud.onmicrosoft.com" -password $pass -tenantId $tenantId -Authtype User
 
 #region Functions
 function precheckAuthToken {
@@ -178,10 +166,6 @@ function Get-AuthToken {
         [string]$tenantId,
 
         # Parameter help description
-        [Parameter(mandatory = $true)]
-        [string]$resourceURL,
-
-        # Parameter help description
         [Parameter(mandatory = $false)]
         [string]$refresh,
 
@@ -191,101 +175,111 @@ function Get-AuthToken {
         [string]$Authtype
     )
 
-    if ($null -eq $clientId) { $clientId = "d1ddf0e4-d672-4dae-b554-9d5bdfd93547"; Write-Output "Using default Client ID: $($clientId)" } else { Write-Output "Using Custom Client ID: $($clientId)" }
-
-
-    switch ($Authtype) {
-        "Application" {
-            $_AuthType = 'Application'
-        }
-        "User" {
-            $_AuthType = 'User'
-        }
-        Default { }
-    }
-
-
-    ###############################
-    if ($_AuthType -eq 'User') {
-        Write-Output "Loging in with Userame and Password"
-
-        if ($refresh) {
-            $body = @{
-                resource      = $resourceURL
-                client_id     = $clientId
-                grant_type    = "refresh_token"
-                username      = $userName
-                scope         = "openid"
-                password      = $password
-                refresh_token = $refresh
-            }
+    begin {
+        if ($null -eq $clientId) {
+            $clientId = "d1ddf0e4-d672-4dae-b554-9d5bdfd93547"
+            Write-Verbose "Using default Client ID: $($clientId)"
         }
         else {
-            $body = @{
-                resource   = $resourceURL
-                client_id  = $clientId
-                grant_type = "password"
-                username   = $userName
-                scope      = "openid"
-                password   = $password
-            }
+            Write-Verbose "Using Custom Client ID: $($clientId)"
         }
 
-        $uri = "https://login.microsoftonline.com/$tenantId/oauth2/token"
-        $response = Invoke-RestMethod -Method post -Uri $uri -Body $body
+        $resourceURL = "https://graph.microsoft.com"
 
-        if ($response.Access_Token) {
-            # Creating header for Authorization token
-            $authHeader = @{
-                'Content-Type'  = 'application/json'
-                'Authorization' = "Bearer " + $response.Access_Token
-                'ExpiresOn'     = $response.expires_in
+        switch ($Authtype) {
+            "Application" {
+                $_AuthType = 'Application'
             }
-            return $authHeader
-        }
-        else {
-            Write-Error "Unable to authenticate"
-            Write-Error $_ -ErrorAction Stop
+            "User" {
+                $_AuthType = 'User'
+            }
+            Default { }
         }
     }
 
-    ###############################
-    if ($_AuthType -eq 'Application') {
-        Write-Output "Logging in with appplicationID and token"
+    process {
+        ###############################
+        if ($_AuthType -eq 'User') {
+            Write-Output "Loging in with Userame and Password"
 
-        if ($refresh) {
-            $body = @{
-                client_id     = $clientId
-                scope         = "https://graph.microsoft.com/.default"
-                client_secret = $clientSecret
-                grant_type    = "refresh_token"
-                refresh_token = $refresh
+            if ($refresh) {
+                $body = @{
+                    resource      = $resourceURL
+                    client_id     = $clientId
+                    grant_type    = "refresh_token"
+                    username      = $userName
+                    scope         = "openid"
+                    password      = $password
+                    refresh_token = $refresh
+                }
+            }
+            else {
+                $body = @{
+                    resource   = $resourceURL
+                    client_id  = $clientId
+                    grant_type = "password"
+                    username   = $userName
+                    scope      = "openid"
+                    password   = $password
+                }
+            }
+
+            $uri = "https://login.microsoftonline.com/$tenantId/oauth2/token"
+            $response = Invoke-RestMethod -Method post -Uri $uri -Body $body
+
+            if ($response.Access_Token) {
+                # Creating header for Authorization token
+                $authToken = @{
+                    'Content-Type'  = 'application/json'
+                    'Authorization' = "Bearer " + $response.Access_Token
+                    'ExpiresOn'     = $response.expires_in
+                }
+                return $authToken
+            }
+            else {
+                Write-Error "Unable to authenticate"
+                Write-Error $_ -ErrorAction Stop
             }
         }
-        else {
-            $body = @{
-                client_id     = $clientId
-                scope         = "https://graph.microsoft.com/.default"
-                client_secret = $clientSecret
-                grant_type    = "client_credentials"
-            }
-        }
 
-        $uri = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token"
-        $response = Invoke-RestMethod -Method post -Uri $uri -ContentType "application/x-www-form-urlencoded" -Body $body -UseBasicParsing -ErrorAction SilentlyContinue
+        ###############################
+        if ($_AuthType -eq 'Application') {
+            Write-Verbose "Logging in with appplicationID and token"
 
-        if ($response.Access_Token) {
-            # Creating header for Authorization token
-            $authHeader = @{
-                'Content-Type'  = 'application/json'
-                'Authorization' = "Bearer " + $response.Access_Token
-                'ExpiresOn'     = $response.expires_in
+            if ($refresh) {
+                $body = @{
+                    client_id     = $clientId
+                    scope         = "https://graph.microsoft.com/.default"
+                    client_secret = $clientSecret
+                    grant_type    = "refresh_token"
+                    refresh_token = $refresh
+                }
             }
-            return $authHeader
-        }
-        else {
-            Write-Error "Unable to authenticate"
-            Write-Error $_ -ErrorAction Stop
+            else {
+                $body = @{
+                    client_id     = $clientId
+                    scope         = "https://graph.microsoft.com/.default"
+                    client_secret = $clientSecret
+                    grant_type    = "client_credentials"
+                }
+            }
+
+            $uri = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token"
+            $response = Invoke-RestMethod -Method post -Uri $uri -ContentType "application/x-www-form-urlencoded" -Body $body -UseBasicParsing -ErrorAction SilentlyContinue
+
+            if ($response.Access_Token) {
+                # Creating header for Authorization token
+                $authToken = @{
+                    'Content-Type'  = 'application/json'
+                    'Authorization' = "Bearer " + $response.Access_Token
+                    'ExpiresOn'     = $response.expires_in
+                }
+                return $authToken
+            }
+            else {
+                Write-Error "Unable to authenticate"
+                Write-Error $_ -ErrorAction Stop
+            }
         }
     }
 }
@@ -352,28 +346,28 @@ function Get-DeviceManagementPolicy {
     [cmdletbinding()]
     param
     (
-      [Parameter(Mandatory = $false)]
-      $authToken,
+        [Parameter(Mandatory = $false)]
+        $authToken,
 
-      [Parameter(Mandatory)]
-      [ValidateSet('Configuration', 'Compliance', 'Script')]
-      [string]$managementType
+        [Parameter(Mandatory)]
+        [ValidateSet('Configuration', 'Compliance', 'Script')]
+        [string]$managementType
 
     )
 
     switch ($managementType) {
-      "Configuration" {
-        $graphEndpoint = "deviceManagement/deviceConfigurations"
-        break
-      }
-      "Compliance" {
-        $graphEndpoint = "deviceManagement/deviceCompliancePolicies"
-        break
-      }
-      "Script" {
-        $graphEndpoint = "deviceManagement/deviceManagementScripts"
-        break
-      }
+        "Configuration" {
+            $graphEndpoint = "deviceManagement/deviceConfigurations"
+            break
+        }
+        "Compliance" {
+            $graphEndpoint = "deviceManagement/deviceCompliancePolicies"
+            break
+        }
+        "Script" {
+            $graphEndpoint = "deviceManagement/deviceManagementScripts"
+            break
+        }
     }
 
     $graphApiVersion = "Beta"
@@ -381,31 +375,30 @@ function Get-DeviceManagementPolicy {
     $uri = "https://graph.microsoft.com/$graphApiVersion/$($graphEndpoint)"
 
     try {
-      if ($managementType -eq "Script") {
-        $response = @()
-        $tmpRes = Invoke-RestMethod -Method Get -Uri $uri -Headers $authToken | select-object value -ExpandProperty value
-        foreach ($x in $tmpRes) {
-          $response += Invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/$graphApiVersion/$($graphEndpoint)/$($x.id)" -Headers $authToken -ContentType "application/json"
-        }
-        return $response
-      }
-      else {
-        $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $authToken | select-object value -ExpandProperty value
-        if ($response) {
-          Write-Host "Found $($response.count) objects"
-          return $response
+        if ($managementType -eq "Script") {
+            $response = @()
+            $tmpRes = Invoke-RestMethod -Method Get -Uri $uri -Headers $authToken | select-object value -ExpandProperty value
+            foreach ($x in $tmpRes) {
+                $response += Invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/$graphApiVersion/$($graphEndpoint)/$($x.id)" -Headers $authToken -ContentType "application/json"
+            }
+            return $response
         }
         else {
-          throw "Nothing returned.."
+            $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $authToken | select-object value -ExpandProperty value
+            if ($response) {
+                Write-Verbose "Found $($response.count) objects for $($managementType)"
+                return $response
+            }
+            else {
+                throw "Nothing returned.."
+            }
         }
-      }
     }
     catch {
-      $ex = $_.Exception
-      Write-Warning $ex
-      break
+        Write-Verbose $_.Exception
+        Write-Error "Unable to get dat from graph" -ErrorAction Stop
     }
-  }
+}
 
 function Invoke-PlasterManifest {
     param (
@@ -548,26 +541,46 @@ function Import-IntuneConfig {
     }
 }
 
+
+Export-IntuneConfig -ConfType All -authToken $token -FilePath "C:\sources\pkm-intune" -Verbose
 function Export-IntuneConfig {
     param (
         # Parameter help description
-        [Parameter(mandatory = $true)]
+        [Parameter(mandatory = $false)]
         [string]$FilePath,
 
         [Parameter(Mandatory)]
         [ValidateSet('Configuration', 'Compliance', 'Script', 'All')]
-        [string]$ConfType
+        [string]$ConfType,
 
+        $authToken
     )
 
     begin {
-        precheckAuthToken
+        #precheckAuthToken
+
+        if ($FilePath) { $FilePath = $FilePath.TrimEnd('\') } else { $FilePath = $PSScriptRoot }
+
+        if (Test-Path $FilePath) {
+            Write-Verbose "Export files to $($FilePath)"
+        }
+        else {
+            Write-Verbose "$($FilePath) doesn't exists, creating folder.."
+            try {
+                New-Item $FilePath -ItemType Directory -Force
+                Write-Verbose "Created directory $($FilePath)"
+            }
+            catch {
+                Write-Verbose $_
+                Write-Error "Unable to create directory $($FilePath)"
+            }
+        }
     }
 
     process {
         if ($ConfType -eq 'Configuration' -or $ConfType -eq 'All') {
 
-            $configPath = "$path\Intune-Plaster-Build\templates\config-profiles"
+            $configPath = "$FilePath\Intune-Plaster-Build\templates\config-profiles"
 
             if (Test-Path $configPath) {
                 Write-Verbose "Exporting to $($configPath)"
@@ -591,7 +604,7 @@ function Export-IntuneConfig {
 
         if ($ConfType -eq 'Compliance' -or $ConfType -eq 'All') {
 
-            $compPath = "$PSScriptRoot\Intune-Plaster-Build\templates\compliance-policies"
+            $compPath = "$FilePath\Intune-Plaster-Build\templates\compliance-policies"
 
             if (Test-Path $compPath) {
                 Write-Verbose "Exporting to $($compPath)"
@@ -616,7 +629,7 @@ function Export-IntuneConfig {
 
         if ($ConfType -eq 'Script' -or $ConfType -eq 'All') {
 
-            $scriptPath = "$PSScriptRoot\Intune-Plaster-Build\templates\scripts"
+            $scriptPath = "$FilePath\Intune-Plaster-Build\templates\scripts"
 
             if (Test-Path $scriptPath) {
                 Write-Verbose "Exporting to $($scriptPath)"
