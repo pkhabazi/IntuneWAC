@@ -3,9 +3,7 @@ $tenantId = "c8ce4011-e689-48a2-ba74-46fe334d73ff"
 $clientSecret = 'emH.yXnv/Z-EhRe[PnmAjLBxBs53dS31'
 
 $token = Get-AuthToken -clientId $clientId -clientSecret $clientSecret -tenantId $tenantId -Authtype Application
-
-$pass = ConvertTo-SecureString "Ehk58HV^3ab@lsp3" -AsPlainText -Force
-$tokenuser = Get-AuthToken -userName "pouyan.graph@condiciocloud.onmicrosoft.com" -password $pass -tenantId $tenantId -Authtype User
+$tokenuser = Get-AuthToken -userName "pouyan.graph@condiciocloud.onmicrosoft.com" -password "Ehk58HV^3ab@lsp3" -tenantId $tenantId -Authtype User -Verbose
 
 #region Functions
 function precheckAuthToken {
@@ -142,6 +140,35 @@ function Set-AdminConsent {
 }
 
 function Get-AuthToken {
+    <#
+    .SYNOPSIS
+    This function is used to authenticate with the Graph API REST interface
+    .DESCRIPTION
+    The function authenticate with the Graph API Interface using username and password or using applicationID and Password
+    .PARAMETER userName
+     coming
+    .PARAMETER password
+    coming
+    .PARAMETER clientId
+    coming
+    .PARAMETER clientSecret
+    coming
+    .PARAMETER tenantId
+    coming
+    .PARAMETER refresh
+    coming
+    .PARAMETER Authtype
+    coming
+
+    .EXAMPLE
+    Get-AuthToken -clientId $clientId -clientSecret $clientSecret -tenantId $tenantId -Authtype Application
+    Authenticates you with the Graph API interface
+    .EXAMPLE
+    Get-AuthToken -userName "pouyan.graph@condiciocloud.onmicrosoft.com" -password "Ehk58HV^3ab@lsp3" -tenantId $tenantId -Authtype User -Verbose
+    Authenticates you with the Graph API interface
+    .NOTES
+    NAME: Get-AuthToken
+    #>
 
     [cmdletbinding()]
     param (
@@ -151,7 +178,7 @@ function Get-AuthToken {
 
         # Parameter help description
         [Parameter(mandatory = $false)]
-        [securestring]$password,
+        [string]$password,
 
         # Parameter help description
         [Parameter(mandatory = $false)]
@@ -176,13 +203,9 @@ function Get-AuthToken {
     )
 
     begin {
-        if ($null -eq $clientId) {
-            $clientId = "d1ddf0e4-d672-4dae-b554-9d5bdfd93547"
-            Write-Verbose "Using default Client ID: $($clientId)"
-        }
-        else {
-            Write-Verbose "Using Custom Client ID: $($clientId)"
-        }
+    }
+
+    process {
 
         $resourceURL = "https://graph.microsoft.com"
 
@@ -195,12 +218,18 @@ function Get-AuthToken {
             }
             Default { }
         }
-    }
 
-    process {
+        if ($clientId -eq '') {
+            $clientId = "d1ddf0e4-d672-4dae-b554-9d5bdfd93547"
+            Write-Verbose "Using default Client ID: $($clientId)"
+        }
+        else {
+            Write-Verbose "Using Custom Client ID: $($clientId)"
+        }
+
         ###############################
         if ($_AuthType -eq 'User') {
-            Write-Output "Loging in with Userame and Password"
+            Write-Verbose "Loging in with Userame and Password"
 
             if ($refresh) {
                 $body = @{
@@ -225,25 +254,37 @@ function Get-AuthToken {
             }
 
             $uri = "https://login.microsoftonline.com/$tenantId/oauth2/token"
-            $response = Invoke-RestMethod -Method post -Uri $uri -Body $body
 
-            if ($response.Access_Token) {
-                # Creating header for Authorization token
-                $authToken = @{
-                    'Content-Type'  = 'application/json'
-                    'Authorization' = "Bearer " + $response.Access_Token
-                    'ExpiresOn'     = $response.expires_in
+            try {
+                Write-Verbose "Connecting to uri: $($uri)"
+
+                $response = Invoke-RestMethod -Method post -Uri $uri -Body $body
+
+                if ($response.Access_Token) {
+
+                    Write-Verbose "Creating header for Authorization token"
+
+                    $authToken = @{
+                        'Content-Type'  = 'application/json'
+                        'Authorization' = "Bearer " + $response.Access_Token
+                        'ExpiresOn'     = $response.expires_in
+                    }
+                    return $authToken
                 }
-                return $authToken
+                else {
+                    Write-Verbose $_
+                    Write-Error "Unale to authenticate" -ErrorAction Stop
+                }
             }
-            else {
-                Write-Error "Unable to authenticate"
-                Write-Error $_ -ErrorAction Stop
+            catch {
+                Write-Verbose $_
+                Write-Error "Unable to connect" -ErrorAction Stop
             }
         }
 
         ###############################
         if ($_AuthType -eq 'Application') {
+
             Write-Verbose "Logging in with appplicationID and token"
 
             if ($refresh) {
@@ -268,7 +309,9 @@ function Get-AuthToken {
             $response = Invoke-RestMethod -Method post -Uri $uri -ContentType "application/x-www-form-urlencoded" -Body $body -UseBasicParsing -ErrorAction SilentlyContinue
 
             if ($response.Access_Token) {
-                # Creating header for Authorization token
+
+                Write-Verbose "Creating header for Authorization token"
+
                 $authToken = @{
                     'Content-Type'  = 'application/json'
                     'Authorization' = "Bearer " + $response.Access_Token
@@ -277,8 +320,9 @@ function Get-AuthToken {
                 return $authToken
             }
             else {
-                Write-Error "Unable to authenticate"
-                Write-Error $_ -ErrorAction Stop
+                Write-Verbose $_
+                Write-Error "Unable to authenticate" -ErrorAction Stop
+
             }
         }
     }
@@ -318,10 +362,12 @@ Function Add-DeviceManagementPolicy {
             }
         }
         $graphApiVersion = "Beta"
-        Write-Verbose "Resource: $graphEndpoint"
         $uri = "https://graph.microsoft.com/$graphApiVersion/$($graphEndpoint)"
+
         try {
-            Write-Output "Posting $managementType policy.."
+            Write-Verbose "Connecting to endpoint: $($graphEndpoint.Split('/')[1])"
+            Write-Verbose "Connecting using fully uri: $($uri)"
+
             $res = Invoke-RestMethod -Uri $uri -Headers $authToken -Method Post -Body $json -ContentType "application/json"
             return $res
         }
@@ -332,10 +378,8 @@ Function Add-DeviceManagementPolicy {
             $reader.BaseStream.Position = 0
             $reader.DiscardBufferedData()
             $responseBody = $reader.ReadToEnd()
-            Write-Host "Response content:`n$responseBody" -f Red
-            Write-Error "Request to $Uri failed with HTTP Status $($ex.Response.StatusCode) $($ex.Response.StatusDescription)"
-            Write-Host
-            break
+            Write-Verbose "Request to $Uri failed with HTTP Status $($ex.Response.StatusCode) $($ex.Response.StatusDescription)"
+            Write-Error "Response content:`n$responseBody" -ErrorAction Stop
         }
     }
 
@@ -346,7 +390,7 @@ function Get-DeviceManagementPolicy {
     [cmdletbinding()]
     param
     (
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $true)]
         $authToken,
 
         [Parameter(Mandatory)]
@@ -355,48 +399,63 @@ function Get-DeviceManagementPolicy {
 
     )
 
-    switch ($managementType) {
-        "Configuration" {
-            $graphEndpoint = "deviceManagement/deviceConfigurations"
-            break
-        }
-        "Compliance" {
-            $graphEndpoint = "deviceManagement/deviceCompliancePolicies"
-            break
-        }
-        "Script" {
-            $graphEndpoint = "deviceManagement/deviceManagementScripts"
-            break
-        }
+    begin {
+        precheckAuthToken
     }
 
-    $graphApiVersion = "Beta"
-    Write-Verbose "Resource: $graphEndpoint"
-    $uri = "https://graph.microsoft.com/$graphApiVersion/$($graphEndpoint)"
-
-    try {
-        if ($managementType -eq "Script") {
-            $response = @()
-            $tmpRes = Invoke-RestMethod -Method Get -Uri $uri -Headers $authToken | select-object value -ExpandProperty value
-            foreach ($x in $tmpRes) {
-                $response += Invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/$graphApiVersion/$($graphEndpoint)/$($x.id)" -Headers $authToken -ContentType "application/json"
+    process {
+        switch ($managementType) {
+            "Configuration" {
+                $graphEndpoint = "deviceManagement/deviceConfigurations"
+                break
             }
-            return $response
+            "Compliance" {
+                $graphEndpoint = "deviceManagement/deviceCompliancePolicies"
+                break
+            }
+            "Script" {
+                $graphEndpoint = "deviceManagement/deviceManagementScripts"
+                break
+            }
         }
-        else {
-            $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $authToken | select-object value -ExpandProperty value
-            if ($response) {
-                Write-Verbose "Found $($response.count) objects for $($managementType)"
-                return $response
+
+        $graphApiVersion = "Beta"
+        Write-Verbose "Resource: $graphEndpoint"
+        $uri = "https://graph.microsoft.com/$graphApiVersion/$($graphEndpoint)"
+
+        Write-Verbose "Connicting to uri: $($uri)"
+
+        try {
+            if ($managementType -eq "Script") {
+                Write-Verbose "Getting Device Management Script"
+                $response = @()
+                $tmpRes = Invoke-RestMethod -Method Get -Uri $uri -Headers $authToken | select-object value -ExpandProperty value
+                if ($tmpRes) {
+                    foreach ($x in $tmpRes) {
+                        $response += Invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/$graphApiVersion/$($graphEndpoint)/$($x.id)" -Headers $authToken -ContentType "application/json"
+                    }
+                    return $response
+                }
+                else {
+                    Write-Verbose "No Scripts found to return"
+                }
             }
             else {
-                throw "Nothing returned.."
+                Write-Verbose "Getting Device Management Configuration and/or Comliance Policy"
+                $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $authToken | select-object value -ExpandProperty value
+                if ($response) {
+                    Write-Verbose "Found $($response.count) objects for $($managementType)"
+                    return $response
+                }
+                else {
+                    Write-Verbose "nothing to return"
+                }
             }
         }
-    }
-    catch {
-        Write-Verbose $_.Exception
-        Write-Error "Unable to get dat from graph" -ErrorAction Stop
+        catch {
+            Write-Verbose $_.Exception
+            Write-Error "Unable to get dat from graph" -ErrorAction Stop
+        }
     }
 }
 
@@ -413,6 +472,7 @@ function Invoke-PlasterManifest {
             Import-Module -Name Plaster
         }
         catch {
+            Write-Warning "Run Install-Module Powershell-Yaml, Plaster -Scope CurrentUser -Force"
             Write-Error $_ -ErrorAction Stop
         }
     }
@@ -541,9 +601,26 @@ function Import-IntuneConfig {
     }
 }
 
-
-Export-IntuneConfig -ConfType All -authToken $token -FilePath "C:\sources\pkm-intune" -Verbose
 function Export-IntuneConfig {
+    <#
+    .SYNOPSIS
+    This function is used to Export the current configuration
+    .DESCRIPTION
+    The function exports the current configuration of Intune
+    .Parameter FilePath
+    specify the path where you want to export the configuration to
+    .Parameter ConfType
+    specify which type of config type you want to export: 'Configuration', 'Compliance', 'Script', 'All'
+    .EXAMPLE
+    Export-IntuneConfig -ConfType All -authToken $token -FilePath "C:\sources\pkm-intune\demo" -Verbose
+    Export Current configuration to spicified folder
+    .EXAMPLE
+    Export-IntuneConfig -ConfType All -authToken $token -FilePath "C:\sources\pkm-intune\demo"
+    Export Current configuration with verbose support
+    .NOTES
+    NAME: Export-IntuneConfig
+    #>
+
     param (
         # Parameter help description
         [Parameter(mandatory = $false)]
