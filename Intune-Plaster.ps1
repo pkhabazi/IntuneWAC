@@ -6,33 +6,44 @@ $token = Get-AuthToken -clientId $clientId -clientSecret $clientSecret -tenantId
 $tokenuser = Get-AuthToken -userName "pouyan.graph@condiciocloud.onmicrosoft.com" -password "Ehk58HV^3ab@lsp3" -tenantId $tenantId -Authtype User -Verbose
 
 #region Functions
+
+precheckAuthToken -authtoken $authToken -Verbose
 function precheckAuthToken {
+
+    [cmdletbinding()]
+    param (
+        $authtoken
+    )
+
+    begin {
+
+    }
 
     process {
         # Checking if authToken exists before running authentication
-        if ($global:authToken) {
+        if ($authToken) {
             # Setting DateTime to Universal time to work in all timezones
-            Write-Output "authToken exists, testing the validation"
+            Write-Verbose "authToken exists, testing the validation"
             $DateTime = (Get-Date).ToUniversalTime()
             # If the authToken exists checking when it expires
-            $TokenExpires = ($authToken.ExpiresOn.datetime - $DateTime).Minutes
+            $TokenExpires = ($authToken.ExExpiresin - $DateTime).Minutes
 
             if ($TokenExpires -le 0) {
-                #Write-Warning "Authentication Token expired" $TokenExpires "minutes ago" -ForegroundColor Yellow
-                # Defining Azure AD tenant name, this is the name of your Azure Active Directory (do not use the verified domain name)
-                #$global:authToken = Get-AuthToken -User $username -Pass $password
-                throw "Authentication Token expired $TokenExpires minutes ago, Run Get-AuthToken first!"
+                Write-Error "Authentication Token expired $TokenExpires minutes ago, Run Get-AuthToken first!"
 
+            }
+            else {
+                Write-Verbose "Token expires in $($TokenExpires) minutes"
             }
         }
         else {
             # Getting the authorization token
-            Write-Output "authToken doesn't exists, requesting"
-            #$global:authToken = Get-AuthToken -User $username -Pass $password
-            throw "authToken is empty, Run Get-AuthToken first!"
+            Write-Verbose "authToken doesn't exists, requesting"
+            Write-Error "authToken is empty, Run Get-AuthToken first!"
         }
         #endregion
     }
+
 }
 
 function New-CustomIntuneApplication {
@@ -316,6 +327,7 @@ function Get-AuthToken {
                     'Content-Type'  = 'application/json'
                     'Authorization' = "Bearer " + $response.Access_Token
                     'ExpiresOn'     = $response.expires_in
+                    'ExExpiresin'   = (Get-Date).ToUniversalTime().AddMinutes('60')
                 }
                 return $authToken
             }
@@ -387,11 +399,15 @@ Function Add-DeviceManagementPolicy {
 }
 
 function Get-DeviceManagementPolicy {
+    <#
+    .SYNOPSIS
+    .
+    #>
     [cmdletbinding()]
     param
     (
         [Parameter(Mandatory = $true)]
-        $authToken,
+        [System.Object.Hashtable]$authToken,
 
         [Parameter(Mandatory)]
         [ValidateSet('Configuration', 'Compliance', 'Script')]
@@ -400,7 +416,7 @@ function Get-DeviceManagementPolicy {
     )
 
     begin {
-        precheckAuthToken
+        precheckAuthToken -authtoken $authToken
     }
 
     process {
@@ -630,11 +646,15 @@ function Export-IntuneConfig {
         [ValidateSet('Configuration', 'Compliance', 'Script', 'All')]
         [string]$ConfType,
 
-        $authToken
+        [Parameter(Mandatory)]
+        [System.Object.Hashtable]$authToken
     )
 
     begin {
-        #precheckAuthToken
+        precheckAuthToken -authtoken $authToken
+    }
+
+    process {
 
         if ($FilePath) { $FilePath = $FilePath.TrimEnd('\') } else { $FilePath = $PSScriptRoot }
 
@@ -652,9 +672,7 @@ function Export-IntuneConfig {
                 Write-Error "Unable to create directory $($FilePath)"
             }
         }
-    }
 
-    process {
         if ($ConfType -eq 'Configuration' -or $ConfType -eq 'All') {
 
             $configPath = "$FilePath\Intune-Plaster-Build\templates\config-profiles"
