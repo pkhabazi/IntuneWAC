@@ -368,7 +368,7 @@ function backup-policy {
 
 }
 
-Function Add-DeviceManagementPolicy {
+Function Push-DeviceManagementPolicy {
 
     [cmdletbinding()]
     param
@@ -626,7 +626,7 @@ function Import-IntuneConfig {
             foreach ($x in $deviceConfiguration) {
                 $tmpJson = $null
                 $tmpJson = Get-Content $x.FullName -raw
-                $result = Add-DeviceManagementPolicy -authToken $authToken -json $tmpJson -managementType Configuration
+                $result = Push-DeviceManagementPolicy -authToken $authToken -json $tmpJson -managementType Configuration
                 $result | ConvertTo-Yaml | Out-File -FilePath "$ENV:Temp\Configuration_$($x.Name -replace '.json','').yaml" -Encoding ascii
 
                 if ($azDevOps) {
@@ -644,7 +644,7 @@ function Import-IntuneConfig {
             foreach ($x in (Get-ChildItem $deviceCompliance)) {
                 $tmpJson = $null
                 $tmpJson = Get-Content $x.FullName -raw
-                $result = Add-DeviceManagementPolicy -authToken $authToken -json $tmpJson -managementType Compliance
+                $result = Push-DeviceManagementPolicy -authToken $authToken -json $tmpJson -managementType Compliance
                 $result | ConvertTo-Yaml | Out-File -FilePath "$ENV:Temp\Compliance_$($x.Name -replace '.json','').yaml" -Encoding ascii -Force
 
                 if ($azDevOps) {
@@ -667,7 +667,7 @@ function Import-IntuneConfig {
                 $tmpScript = Get-Content "$($x.FullName)\$($x.Name).ps1" -raw
                 $tmpEncScript = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$tmpScript"))
                 $tmpJson | Add-Member -MemberType NoteProperty -Name "scriptContent" -Value $tmpEncScript
-                $result = Add-DeviceManagementPolicy -authToken $authToken -json ($tmpJson | ConvertTo-Json -Depth 100) -managementType Script
+                $result = Push-DeviceManagementPolicy -authToken $authToken -json ($tmpJson | ConvertTo-Json -Depth 100) -managementType Script
                 $result | ConvertTo-Yaml | Out-File -FilePath "$ENV:Temp\Script_$($x.Name -replace '.json','').yaml" -Encoding ascii -Force
 
                 if ($azDevOps) {
