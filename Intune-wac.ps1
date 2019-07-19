@@ -1,9 +1,8 @@
-$clientId = "514e80b8-f8eb-4dbf-a11e-3d680716473b"
-$tenantId = "c8ce4011-e689-48a2-ba74-46fe334d73ff"
-$clientSecret = 'emH.yXnv/Z-EhRe[PnmAjLBxBs53dS31'
+<#
+.SYNOPSIS
+Coming soon
+#>
 
-$token = Get-AuthToken -clientId $clientId -clientSecret $clientSecret -tenantId $tenantId -Authtype Application
-$tokenuser = Get-AuthToken -userName "pouyan.graph@condiciocloud.onmicrosoft.com" -password "Ehk58HV^3ab@lsp3" -tenantId $tenantId -Authtype User -Verbose
 
 #region Functions
 
@@ -504,49 +503,6 @@ function Get-DeviceManagementPolicy {
         }
     }
 }
-function Invoke-PlasterManifest {
-    param (
-    )
-
-    begin {
-        $plasterTemplatePath = "$PSScriptRoot\Intune-Plaster-Build"
-        $projectDestination = "$PSScriptRoot"
-
-        try {
-            Import-Module -Name Powershell-Yaml
-            Import-Module -Name Plaster
-        }
-        catch {
-            Write-Warning "Run Install-Module Powershell-Yaml, Plaster -Scope CurrentUser -Force"
-            Write-Error $_ -ErrorAction Stop
-        }
-    }
-
-    process {
-        $params = @{
-            ClientName          = $config.client
-            ClientDomain        = $config.tenantDomain
-            ConfigPolicy        = $(if ($config.configPolicies) { $true } else { $false })
-            confBitlocker       = $(if ($config.configPolicies -contains "bitlocker") { $true } else { $false })
-            confCorpBranding    = $(if ($config.configPolicies.corporateBranding) { $true } else { $false })
-            desktopImageUrl     = $(if ($config.configPolicies.corporateBranding) { $config.configPolicies.corporateBranding.desktopImageUrl })
-            lockscreenImageUrl  = $(if ($config.configPolicies.corporateBranding) { $config.configPolicies.corporateBranding.lockscreenImageUrl })
-            confDevRestrictions = $(if ($config.configPolicies.deviceRestrictions) { $true } else { $false })
-            homepageUrl         = $(if ($config.configPolicies.deviceRestrictions) { $config.configPolicies.deviceRestrictions.homepageUrl } else { " " })
-            confEndProtection   = $(if ($config.configPolicies.endpointProtection) { $true } else { $false })
-            corporateMsgTitle   = $(if ($config.configPolicies.endpointProtection) { $config.configPolicies.endpointProtection.corporateMsgTitle } else { " " })
-            corporateMsgText    = $(if ($config.configPolicies.endpointProtection) { $config.configPolicies.endpointProtection.corporateMsgText } else { " " })
-            CompliancePolicy    = $(if ($config.compliancePolicies) { $true } else { $false })
-            compBitlocker       = $(if ($config.compliancePolicies -contains "bitlocker") { $true } else { $false })
-            scriptTimezone      = $(if ($config.scripts -contains "timezone") { $true } else { $false })
-            scriptbitlocker     = $(if ($config.scripts -contains "bitlocker") { $true } else { $false })
-            scriptonedrive      = $(if ($config.scripts -contains "onedrive") { $true } else { $false })
-            scriptwallpaperFix  = $(if ($config.scripts -contains "wallpaperFix") { $true } else { $false })
-        }
-
-        Invoke-Plaster -TemplatePath $plasterTemplatePath -DestinationPath $projectDestination @params -Force
-    }
-}
 
 function Get-ObjectMembers {
     [CmdletBinding()]
@@ -581,6 +537,22 @@ function Invoke-Build {
         Write-Error "Unable to read Configuration from $($configFile)" -ErrorAction Stop
     }
 
+    if (! $templatePath) {$templatePath = "$PSScriptRoot\templates"}
+
+
+    if (!$outputPath) {$outputPath = "$PSScriptRoot\output\$($object.generalsettings.customerName)"}
+
+    if (! (Test-Path $outputPath)) {
+        try {
+            New-Item $outputPath -ItemType Directory -Force
+        }
+        catch {
+            Write-Verbose $_
+            Write-Error "Unable to create folder $($outputPath)" -ErrorAction Stop
+        }
+    }
+
+
     foreach ($item in $object) {
         $templateFilePath = "$templatePath\$($item.key).json"
 
@@ -594,7 +566,9 @@ function Invoke-Build {
             }
 
             $objMembers = $item.Value | Get-ObjectMembers
-
+             <#
+             exclude general settings
+             #>
             foreach ($obj in $objMembers) {
                 Write-Output  "name is : $($obj.key) en value is $($obj.Value)"
                 $templateFile.$($obj.Key) = $obj.Value

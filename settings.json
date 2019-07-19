@@ -1,9 +1,10 @@
 {
-    "generalSettings": {
-        "customerName": "",
+    "generalSettings":
+        {
+        "customerName": "pkm",
         "outputPath": ""
-    },
-    "deviceConfigurations": {
+        },
+    "configurationPolicies": {
         "Win10 Corporate Branding": [
             {
                 "displayName": "testname",
