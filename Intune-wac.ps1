@@ -6,9 +6,16 @@ Coming soon
 
 #region Functions
 
-precheckAuthToken -authtoken $authToken -Verbose
 function precheckAuthToken {
-
+    <#
+    .SYNOPSIS
+        This function is to check if all prereq are available
+    .DESCRIPTION
+    .EXAMPLE
+        precheckAuthToken -authtoken $authToken -Verbose
+    .PARAMETER
+    $authtoken
+    #>
     [cmdletbinding()]
     param (
         $authtoken
@@ -529,9 +536,9 @@ function Invoke-Build {
         [string]$templatePath
     )
 
-#    begin {
-#        Get-ObjectMembers
-#    }
+    begin {
+        # Get-ObjectMembers
+    }
 
     process {
         try {
