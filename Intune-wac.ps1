@@ -529,62 +529,98 @@ function Invoke-Build {
         [string]$templatePath
     )
 
-    try {
-        $object = Get-Content $configFile | ConvertFrom-Json | Get-ObjectMembers
-    }
-    catch {
-        Write-Verbose $_
-        Write-Error "Unable to read Configuration from $($configFile)" -ErrorAction Stop
+    begin {
+        Get-ObjectMembers
     }
 
-    if (! $templatePath) {$templatePath = "$PSScriptRoot\templates"}
-
-
-    if (!$outputPath) {$outputPath = "$PSScriptRoot\output\$($object.generalsettings.customerName)"}
-
-    if (! (Test-Path $outputPath)) {
+    process {
         try {
-            New-Item $outputPath -ItemType Directory -Force
+            $object = Get-Content $configFile | ConvertFrom-Json
         }
         catch {
             Write-Verbose $_
-            Write-Error "Unable to create folder $($outputPath)" -ErrorAction Stop
+            Write-Error "Unable to read Configuration from $($configFile)" -ErrorAction Stop
         }
-    }
+
+        if (! $templatePath) { $templatePath = ".\templates" } ## Chage path later
 
 
-    foreach ($item in $object) {
-        $templateFilePath = "$templatePath\$($item.key).json"
+        if (!$outputPath) { $outputPath = ".\output\$($object.generalsettings.customerName)" } ## Change path later
 
-        if (Test-Path $templateFilePath) {
+        if (! (Test-Path $outputPath)) {
             try {
-                $templateFile = Get-Content -Raw $templateFilePath | ConvertFrom-Json
+                New-Item $outputPath -ItemType Directory -Force
             }
             catch {
                 Write-Verbose $_
-                Write-Error "Unable to read json from $($templateFilePath)"
-            }
-
-            $objMembers = $item.Value | Get-ObjectMembers
-             <#
-             exclude general settings
-             #>
-            foreach ($obj in $objMembers) {
-                Write-Output  "name is : $($obj.key) en value is $($obj.Value)"
-                $templateFile.$($obj.Key) = $obj.Value
-            }
-
-            try {
-                $templateFile | ConvertTo-Json | Out-File "$outputPath\$($item.Key).json" -Force
-            }
-            catch {
-                Write-Verbose $_
-                Write-Error "Unable To save output"
+                Write-Error "Unable to create folder $($outputPath)" -ErrorAction Stop
             }
         }
-        else {
-            Write-Verbose "Template file not found: $($templateFilePath)"
-            Write-Error "Template file not found" -ErrorAction Stop
+
+        $solutions = $object | Get-ObjectMembers
+
+        ## Exclude geenralsettings
+        $solutions = $solutions | Where-Object {$_.key -notlike "generalSettings"}
+
+        foreach ($solution in $solutions) {
+
+            $items = $template.Value | Get-ObjectMembers
+
+            $outputPathFull = "$outputPath\$($solution.Key)"
+
+            if (! (Test-Path $outputPathFull)) {
+                try {
+                    New-Item $outputPathFull -ItemType Directory -Force
+                }
+                catch {
+                    Write-Verbose $_
+                    Write-Error "Unable to create folder $($outputhPatFull)" -ErrorAction Stop
+                }
+            }
+
+            <#
+                if scripts then do something else
+            #>
+            if ($solution.key -eq 'scripts') {
+                Write-Output
+            }
+            else {
+                foreach ($item in $items) {
+
+                    $templateFilePath = "$templatePath\$($solution.Key)\$($item.key).json"
+
+                    if (Test-Path $templateFilePath) {
+                        try {
+                            $templateFile = Get-Content -Raw $templateFilePath | ConvertFrom-Json
+                        }
+                        catch {
+                            Write-Verbose $_
+                            Write-Error "Unable to read json from $($templateFilePath)"
+                        }
+
+                        $objMembers = $item.Value | Get-ObjectMembers
+                        <#
+                         exclude general settings
+                         #>
+                        foreach ($obj in $objMembers) {
+                            Write-Output  "name is : $($obj.key) en value is $($obj.Value)"
+                            $templateFile.$($obj.Key) = $obj.Value
+                        }
+
+                        try {
+                            $templateFile | ConvertTo-Json | Out-File "$outputPathFull\$($item.Key).json" -Force
+                        }
+                        catch {
+                            Write-Verbose $_
+                            Write-Error "Unable To save output"
+                        }
+                    }
+                    else {
+                        Write-Verbose "Template file not found: $($templateFilePath)"
+                        Write-Error "Template file not found" -ErrorAction Stop
+                    }
+                }
+            }
         }
     }
 }
