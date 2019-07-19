@@ -1,0 +1,15 @@
+{
+  "Win10 Corporate Branding": [
+    {
+      "displayName": "testname",
+      "personalizationDesktopImageUrl": "blabla",
+      "personalizationLockScreenImageUrl": "test 2"
+    }
+  ],
+  "Win10 Device Restrictions": [
+    {
+      "personalizationDesktopImageUrl": "blabla",
+      "personalizationLockScreenImageUrl": "test 2"
+    }
+  ]
+}

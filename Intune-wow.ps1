@@ -340,6 +340,34 @@ function Get-AuthToken {
     }
 }
 
+function Compare-Policy {
+    <#
+    .SYNOPSIS
+    This function is meant for comparison before deployment to find differences
+    .DESCRIPTION
+    This function is meant for comparison before deployment to find differences
+    #>
+    param (
+        $DeviceManagementPolicy
+
+    )
+
+    begin {
+
+    }
+
+    process {
+
+    }
+}
+
+function backup-policy {
+    param (
+        $OptionalParameters
+    )
+
+}
+
 Function Add-DeviceManagementPolicy {
 
     [cmdletbinding()]
@@ -474,7 +502,6 @@ function Get-DeviceManagementPolicy {
         }
     }
 }
-
 function Invoke-PlasterManifest {
     param (
     )
@@ -519,6 +546,45 @@ function Invoke-PlasterManifest {
     }
 }
 
+function Get-ObjectMembers {
+    [CmdletBinding()]
+    Param(
+        [Parameter(Mandatory=$True, ValueFromPipeline=$True)]
+        [PSCustomObject]$obj
+    )
+    $obj | Get-Member -MemberType NoteProperty | ForEach-Object {
+        $key = $_.Name
+        [PSCustomObject]@{Key = $key; Value = $obj."$key"}
+    }
+}
+
+function Invoke-Build {
+    [cmdletbinding()]
+    param (
+        [string]$configFile,
+        [string]$outputPath,
+        [string]$templatePath
+    )
+
+    Get-Content $configFile | ConvertFrom-Json | Get-ObjectMembers
+
+
+foreach ($item in $object) {
+    $templateFile = Get-Content -Raw "$templatePath\$($item.key).json" | ConvertFrom-Json
+
+    Write-Verbose $item.Key
+    Write-Verbose "updating $($item.key)"
+
+    $subobjMembers = $item.Value | Get-ObjectMembers
+    foreach ($obj in $subobjMembers) {
+        Write-Output  "name is : $($obj.key) en value is $($obj.Value)"
+        $templateFile.$($obj.Key) = $obj.Value
+    }
+    $templateFile | ConvertTo-Json | Out-File "$outputPath\$($item.Key).json"
+}
+
+}
+
 function Import-IntuneConfig {
 
     [cmdletbinding()]
@@ -532,6 +598,7 @@ function Import-IntuneConfig {
         $deviceConfigurationPath = "$PSScriptRoot\$($config.client)\configuration"
         $deviceCompliancePath = "$PSScriptRoot\$($config.client)\compliance"
         $deviceScriptPath = "$PSScriptRoot\$($config.client)\scripts"
+
     }
 
     process {
