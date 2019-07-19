@@ -401,6 +401,7 @@ Function Push-DeviceManagementPolicy {
                 break
             }
         }
+
         $graphApiVersion = "Beta"
         $uri = "https://graph.microsoft.com/$graphApiVersion/$($graphEndpoint)"
 
@@ -418,6 +419,7 @@ Function Push-DeviceManagementPolicy {
             $reader.BaseStream.Position = 0
             $reader.DiscardBufferedData()
             $responseBody = $reader.ReadToEnd()
+
             Write-Verbose "Request to $Uri failed with HTTP Status $($ex.Response.StatusCode) $($ex.Response.StatusDescription)"
             Write-Error "Response content:`n$responseBody" -ErrorAction Stop
         }
@@ -624,25 +626,17 @@ function Import-IntuneConfig {
 
     begin {
 
-        if ($sourceFilePath) { $sourceFilePath = $sourceFilePath.TrimEnd('\') } else { $sourceFilePath = $PSScriptRoot }
+        if ($sourceFilePath) { $sourceFilePath = $sourceFilePath.TrimEnd('\') } else { $sourceFilePath = $PSScriptRoot } # what to do with else, set default path of trow error?
 
-        # test nog schrijven
+        # does path need any test, because get-childitem is in try catch below?
         $deviceConfigurationPath = "$sourceFilePath\configuration"
         $deviceCompliancePath = "$sourceFilePath\compliance"
         $deviceScriptPath = "$sourceFilePath\$($config.client)\scripts"
-
     }
 
     process {
 
-        try {
-            $config = Get-Content $yamlPath -raw | ConvertFrom-Yaml
-        }
-        catch {
-            Write-Verbose $_
-            Write-Error "Unable to read Yaml File $($yamlConfig)" -ErrorAction Stop
-        }
-
+        ## Try to get all json files, this files will be uploaded to graph
         try {
             $deviceConfiguration = Get-ChildItem $deviceConfigurationPath
             $deviceCompliance = Get-ChildItem $deviceCompliancePath
@@ -652,8 +646,11 @@ function Import-IntuneConfig {
             Write-Verbose $_
             Write-Error "Unable to get JSON files" -ErrorAction Stop
         }
+        ## end of try
 
-        Write-Output "Uploading Device configuration profiles to Intune.."
+
+        ## Begin of Device configuration upload to intune graph
+        Write-Verbose "Uploading Device configuration profiles to Intune.."
         if ($deviceConfiguration.count -ge 1) {
             foreach ($x in $deviceConfiguration) {
                 $tmpJson = $null
@@ -670,8 +667,11 @@ function Import-IntuneConfig {
         else {
             Write-Verbose "No Device configuration profiles found in $($deviceConfigurationPath) for upload"
         }
+        ## End of Device configuration upload
 
-        Write-Output "Uploading Device compliance policies to Intune.."
+
+        ## Begin of Device Compliance upload to intune graph
+        Write-Verbose "Uploading Device compliance policies to Intune.."
         if ($deviceCompliance.count -ge 1) {
             foreach ($x in (Get-ChildItem $deviceCompliance)) {
                 $tmpJson = $null
@@ -688,8 +688,11 @@ function Import-IntuneConfig {
         else {
             Write-Verbose "No Device configuration profiles found in $($deviceCompliancePath) for upload"
         }
+        ## End of Device Compliance upload
 
-        Write-Output "Uploading scripts to Intune.."
+
+        ## Begin of Scripts upload to intune graph
+        Write-Verbose "Uploading scripts to Intune.."
         if ($deviceScript.count -ge 1) {
             foreach ($x in $deviceScriptPath) {
                 $tmpJson = $null
@@ -706,13 +709,14 @@ function Import-IntuneConfig {
                     $scriptLog = "$ENV:Temp\Script_$($x.Name -replace '.json','').yaml"
                     $scriptLogName = $x.Name | Split-Path
                     Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Scripts - $($x.Name -replace '.json','');]$scriptLogName"
-
                 }
             }
         }
         else {
             Write-Verbose "No Device configuration profiles found in $($deviceScriptPath) for upload"
         }
+        ## End of Scripts upload
+
     }
 }
 
@@ -755,13 +759,14 @@ function Export-IntuneConfig {
 
     process {
 
-        if ($FilePath) { $FilePath = $FilePath.TrimEnd('\') } else { $FilePath = $PSScriptRoot }
+        if ($FilePath) { $FilePath = $FilePath.TrimEnd('\') } else { $FilePath = $PSScriptRoot } # what to do with else, set default path of trow error?
 
         if (Test-Path $FilePath) {
-            Write-Verbose "Export files to $($FilePath)"
+            Write-Verbose "Exporting files to $($FilePath)"
         }
         else {
             Write-Verbose "$($FilePath) doesn't exists, creating folder.."
+
             try {
                 New-Item $FilePath -ItemType Directory -Force
                 Write-Verbose "Created directory $($FilePath)"
