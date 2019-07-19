@@ -1,15 +1,39 @@
 {
-  "Win10 Corporate Branding": [
-    {
-      "displayName": "testname",
-      "personalizationDesktopImageUrl": "blabla",
-      "personalizationLockScreenImageUrl": "test 2"
+    "generalSettings": {
+        "customerName": "",
+        "outputPath": ""
+    },
+    "deviceConfigurations": {
+        "Win10 Corporate Branding": [
+            {
+                "displayName": "testname",
+                "personalizationDesktopImageUrl": "blabla",
+                "personalizationLockScreenImageUrl": "test 2"
+            }
+        ],
+        "Win10 Device Restrictions": [
+            {
+                "personalizationDesktopImageUrl": "blabla",
+                "personalizationLockScreenImageUrl": "test 2"
+            }
+        ]
+    },
+    "compliancePolicies": {
+        "Win10 Corporate Branding": [
+            {
+              "displayName": "testname",
+              "personalizationDesktopImageUrl": "blabla",
+              "personalizationLockScreenImageUrl": "test 2"
+            }
+          ],
+          "Win10 Device Restrictions": [
+            {
+              "personalizationDesktopImageUrl": "blabla",
+              "personalizationLockScreenImageUrl": "test 2"
+            }
+          ]
+    },
+    "scripts": {
+        "Script01": ""
     }
-  ],
-  "Win10 Device Restrictions": [
-    {
-      "personalizationDesktopImageUrl": "blabla",
-      "personalizationLockScreenImageUrl": "test 2"
-    }
-  ]
 }
