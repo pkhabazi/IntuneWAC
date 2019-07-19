@@ -6,16 +6,9 @@
         "tenantDomain": "pkm.onmicrosoft.com"
         },
     "configurationPolicies": {
-        "Win10 Corporate Branding": [
-            {
-                "displayName": "testname",
-                "personalizationDesktopImageUrl": "blabla",
-                "personalizationLockScreenImageUrl": "test 2"
-            }
-        ],
         "DC-WIN-DR": [
             {
-                "authenticationPreferredAzureADTenantDomainName":  "condicio.cloud",
+                "authenticationPreferredAzureADTenantDomainName":  "pkm.cloud",
                 "personalizationDesktopImageUrl": "https://condicio.nl/condicio.png",
                 "personalizationLockScreenImageUrl": "https://condicio.nl/condicio.png",
                 "defenderFilesAndFoldersToExclude":  [
@@ -49,17 +42,27 @@
         ]
     },
     "compliancePolicies": {
-        "Win10 Corporate Branding": [
+        "DCO-WIN": [
             {
-              "displayName": "testname",
-              "personalizationDesktopImageUrl": "blabla",
-              "personalizationLockScreenImageUrl": "test 2"
+                "description":  "Device Compliance Policy for Windows 10.",
+                "displayName":  "DCO-WIN",
+                "passwordRequired":  true,
+                "passwordBlockSimple":  true,
+                "passwordMinutesOfInactivityBeforeLock":  5,
+                "passwordExpirationDays":  180,
+                "passwordMinimumLength":  6
             }
           ],
-          "Win10 Device Restrictions": [
+          "DCO-AND": [
             {
-              "personalizationDesktopImageUrl": "blabla",
-              "personalizationLockScreenImageUrl": "test 2"
+                "description":  "Device Compliance Policy for Android.",
+                "displayName":  "DCO-AND",
+                "passwordRequired":  true,
+                "passwordMinimumLength":  4,
+                "passwordMinutesOfInactivityBeforeLock":  4,
+                "passwordExpirationDays":  170,
+                "passwordPreviousPasswordBlockCount":  3,
+                "osMinimumVersion":  "4.4"
             }
           ]
     },
