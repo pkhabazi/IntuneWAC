@@ -1,0 +1,18 @@
+{
+    "@odata.type":  "#microsoft.graph.windows10CustomConfiguration",
+    "deviceManagementApplicabilityRuleOsEdition":  null,
+    "deviceManagementApplicabilityRuleOsVersion":  null,
+    "deviceManagementApplicabilityRuleDeviceMode":  null,
+    "description":  "",
+    "displayName":  "DC-WIN-Custom-General",
+    "omaSettings":  [
+                        {
+                            "@odata.type":  "#microsoft.graph.omaSettingInteger",
+                            "displayName":  "Enable Self-Service Password Reset from Lock Screen",
+                            "description":  "Self-Service Password Reset from Lock Screen",
+                            "omaUri":  "./Vendor/MSFT/Policy/Config/Authentication/AllowAadPasswordReset",
+                            "value":  1,
+                            "isReadOnly":  false
+                        }
+                    ]
+}

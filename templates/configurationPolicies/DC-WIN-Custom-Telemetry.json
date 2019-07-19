@@ -1,0 +1,33 @@
+{
+    "@odata.type":  "#microsoft.graph.windows10CustomConfiguration",
+    "deviceManagementApplicabilityRuleOsEdition":  null,
+    "deviceManagementApplicabilityRuleOsVersion":  null,
+    "deviceManagementApplicabilityRuleDeviceMode":  null,
+    "description":  "",
+    "displayName":  "DC-WIN-Custom-Telemetry",
+    "omaSettings":  [
+                        {
+                            "@odata.type":  "#microsoft.graph.omaSettingString",
+                            "displayName":  "Windows analytics - Set Commercial ID",
+                            "description":  "Windows analytics",
+                            "omaUri":  "./Vendor/MSFT/DMClient/Provider/MS DM Server/CommercialID",
+                            "value":  "<%=$PLASTER_PARAM_CommercialID%>"
+                        },
+                        {
+                            "@odata.type":  "#microsoft.graph.omaSettingInteger",
+                            "displayName":  "AllowDeviceNameInDiagnosticData",
+                            "description":  "AllowDeviceNameInDiagnosticData",
+                            "omaUri":  "./Vendor/MSFT/Policy/Config/System/AllowDeviceNameInDiagnosticData",
+                            "value":  1,
+                            "isReadOnly":  false
+                        },
+                        {
+                            "@odata.type":  "#microsoft.graph.omaSettingInteger",
+                            "displayName":  "Configure telemetry opt-in change notifications.",
+                            "description":  "ConfigureTelemetryOptInChangeNotification",
+                            "omaUri":  "./Vendor/MSFT/Policy/Config/System/ConfigureTelemetryOptInChangeNotification",
+                            "value":  0,
+                            "isReadOnly":  false
+                        }
+                    ]
+}

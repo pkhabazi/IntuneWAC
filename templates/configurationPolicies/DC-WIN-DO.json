@@ -1,0 +1,29 @@
+{
+    "@odata.type":  "#microsoft.graph.windowsDeliveryOptimizationConfiguration",
+    "deviceManagementApplicabilityRuleOsEdition":  null,
+    "deviceManagementApplicabilityRuleOsVersion":  null,
+    "deviceManagementApplicabilityRuleDeviceMode":  null,
+    "description":  "Corporate Delivery Optimization",
+    "displayName":  "DC-WIN-DO",
+    "deliveryOptimizationMode":  "httpWithPeeringNat",
+    "restrictPeerSelectionBy":  "subnetMask",
+    "groupIdSource":  null,
+    "backgroundDownloadFromHttpDelayInSeconds":  60,
+    "foregroundDownloadFromHttpDelayInSeconds":  60,
+    "minimumRamAllowedToPeerInGigabytes":  4,
+    "minimumDiskSizeAllowedToPeerInGigabytes":  32,
+    "minimumFileSizeToCacheInMegabytes":  10,
+    "minimumBatteryPercentageAllowedToUpload":  40,
+    "modifyCacheLocation":  null,
+    "maximumCacheAgeInDays":  7,
+    "vpnPeerCaching":  "notConfigured",
+    "bandwidthMode":  {
+                          "@odata.type":  "#microsoft.graph.deliveryOptimizationBandwidthPercentage",
+                          "maximumBackgroundBandwidthPercentage":  null,
+                          "maximumForegroundBandwidthPercentage":  null
+                      },
+    "maximumCacheSize":  {
+                             "@odata.type":  "#microsoft.graph.deliveryOptimizationMaxCacheSizeAbsolute",
+                             "maximumCacheSizeInGigabytes":  0
+                         }
+}
