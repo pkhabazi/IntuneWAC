@@ -8,7 +8,7 @@ assignees: ''
 ---
 
 <!--
-This bug tracker is monitored by Windows Terminal development team and other technical folks.
+This bug tracker is monitored by contributors and the community.
 
 **Important: When reporting BSODs or security issues, DO NOT attach memory dumps, logs, or traces to Github issues**.
 Instead, send dumps/traces to secure@microsoft.com, referencing this GitHub issue.
@@ -21,7 +21,7 @@ Please use this form and describe your issue, concisely but precisely, with as m
 
 ```none
 Windows build number: [run "ver" at a command prompt]
-Windows Terminal version (if applicable):
+PowerShell version (if applicable):
 
 Any other software?
 ```
