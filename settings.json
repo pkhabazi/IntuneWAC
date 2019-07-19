@@ -2,7 +2,8 @@
     "generalSettings":
         {
         "customerName": "pkm",
-        "outputPath": ""
+        "outputPath": "",
+        "tenantDomain": "pkm.onmicrosoft.com"
         },
     "configurationPolicies": {
         "Win10 Corporate Branding": [
@@ -12,10 +13,38 @@
                 "personalizationLockScreenImageUrl": "test 2"
             }
         ],
-        "Win10 Device Restrictions": [
+        "DC-WIN-DR": [
             {
-                "personalizationDesktopImageUrl": "blabla",
-                "personalizationLockScreenImageUrl": "test 2"
+                "authenticationPreferredAzureADTenantDomainName":  "condicio.cloud",
+                "personalizationDesktopImageUrl": "https://condicio.nl/condicio.png",
+                "personalizationLockScreenImageUrl": "https://condicio.nl/condicio.png",
+                "defenderFilesAndFoldersToExclude":  [
+                    "%windir%\\softwaredistribution\\datastore",
+                    "%windir%\\softwaredistribution\\datastore\\logs",
+                    "%windir%\\security\\database",
+                    "%ALLUSERSPROFILE%\\Microsoft\\Windows\\Hyper-V",
+                    "%windir%\\containers"
+                ],
+                "defenderFileExtensionsToExclude":  [
+                   "Edb*.jrs",
+                   "Ebd.chk",
+                   "Tmp.edb",
+                   "OfficeClickToRun.exe",
+                   "ost",
+                   "pst"
+               ],
+               "defenderProcessesToExclude":  [
+                "%windir%\\Program Files\\printix.net\\Printix Client\\PrintixClient.exe"
+                ],
+                "edgeHomepageUrls":  [
+                "https://condicio.nl"
+                ]
+            }
+        ],
+        "DC-WIN-EP": [
+            {
+                "localSecurityOptionsLogOnMessageTitle":  null,
+                "localSecurityOptionsLogOnMessageText":  null
             }
         ]
     },
