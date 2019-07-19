@@ -529,9 +529,9 @@ function Invoke-Build {
         [string]$templatePath
     )
 
-    begin {
-        Get-ObjectMembers
-    }
+#    begin {
+#        Get-ObjectMembers
+#    }
 
     process {
         try {
@@ -564,7 +564,7 @@ function Invoke-Build {
 
         foreach ($solution in $solutions) {
 
-            $items = $template.Value | Get-ObjectMembers
+            $items = $solution.Value | Get-ObjectMembers
 
             $outputPathFull = "$outputPath\$($solution.Key)"
 
@@ -639,8 +639,8 @@ function Import-IntuneConfig {
         if ($sourceFilePath) { $sourceFilePath = $sourceFilePath.TrimEnd('\') } else { $sourceFilePath = $PSScriptRoot } # what to do with else, set default path of trow error?
 
         # does path need any test, because get-childitem is in try catch below?
-        $deviceConfigurationPath = "$sourceFilePath\configuration"
-        $deviceCompliancePath = "$sourceFilePath\compliance"
+        $deviceConfigurationPath = "$sourceFilePath\configurationPolicies"
+        $deviceCompliancePath = "$sourceFilePath\compliancePolicies"
         $deviceScriptPath = "$sourceFilePath\$($config.client)\scripts"
     }
 
