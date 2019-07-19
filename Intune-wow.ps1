@@ -549,16 +549,21 @@ function Invoke-PlasterManifest {
 function Get-ObjectMembers {
     [CmdletBinding()]
     Param(
-        [Parameter(Mandatory=$True, ValueFromPipeline=$True)]
+        [Parameter(Mandatory = $True, ValueFromPipeline = $True)]
         [PSCustomObject]$obj
     )
     $obj | Get-Member -MemberType NoteProperty | ForEach-Object {
         $key = $_.Name
-        [PSCustomObject]@{Key = $key; Value = $obj."$key"}
+        [PSCustomObject]@{Key = $key; Value = $obj."$key" }
     }
 }
 
 function Invoke-Build {
+    <#
+    .SYNOPSIS
+    This function will
+
+    #>
     [cmdletbinding()]
     param (
         [string]$configFile,
@@ -566,23 +571,46 @@ function Invoke-Build {
         [string]$templatePath
     )
 
-    Get-Content $configFile | ConvertFrom-Json | Get-ObjectMembers
-
-
-foreach ($item in $object) {
-    $templateFile = Get-Content -Raw "$templatePath\$($item.key).json" | ConvertFrom-Json
-
-    Write-Verbose $item.Key
-    Write-Verbose "updating $($item.key)"
-
-    $subobjMembers = $item.Value | Get-ObjectMembers
-    foreach ($obj in $subobjMembers) {
-        Write-Output  "name is : $($obj.key) en value is $($obj.Value)"
-        $templateFile.$($obj.Key) = $obj.Value
+    try {
+        $object = Get-Content $configFile | ConvertFrom-Json | Get-ObjectMembers
     }
-    $templateFile | ConvertTo-Json | Out-File "$outputPath\$($item.Key).json"
-}
+    catch {
+        Write-Verbose $_
+        Write-Error "Unable to read Configuration from $($configFile)" -ErrorAction Stop
+    }
 
+    foreach ($item in $object) {
+        $templateFilePath = "$templatePath\$($item.key).json"
+
+        if (Test-Path $templateFilePath) {
+            try {
+                $templateFile = Get-Content -Raw $templateFilePath | ConvertFrom-Json
+            }
+            catch {
+                Write-Verbose $_
+                Write-Error "Unable to read json from $($templateFilePath)"
+            }
+
+            $objMembers = $item.Value | Get-ObjectMembers
+
+            foreach ($obj in $objMembers) {
+                Write-Output  "name is : $($obj.key) en value is $($obj.Value)"
+                $templateFile.$($obj.Key) = $obj.Value
+            }
+
+            try {
+                $templateFile | ConvertTo-Json | Out-File "$outputPath\$($item.Key).json" -Force
+            }
+            catch {
+                Write-Verbose $_
+                Write-Error "Unable To save output"
+            }
+        }
+        else {
+            Write-Verbose "Template file not found: $($templateFilePath)"
+            Write-Error "Template file not found" -ErrorAction Stop
+        }
+    }
 }
 
 function Import-IntuneConfig {
@@ -590,14 +618,18 @@ function Import-IntuneConfig {
     [cmdletbinding()]
     param (
         [string]$yamlConfig,
-        [switch]$azDevOps
+        [switch]$azDevOps,
+        [string]$sourceFilePath
     )
 
     begin {
+
+        if ($sourceFilePath) { $sourceFilePath = $sourceFilePath.TrimEnd('\') } else { $sourceFilePath = $PSScriptRoot }
+
         # test nog schrijven
-        $deviceConfigurationPath = "$PSScriptRoot\$($config.client)\configuration"
-        $deviceCompliancePath = "$PSScriptRoot\$($config.client)\compliance"
-        $deviceScriptPath = "$PSScriptRoot\$($config.client)\scripts"
+        $deviceConfigurationPath = "$sourceFilePath\configuration"
+        $deviceCompliancePath = "$sourceFilePath\compliance"
+        $deviceScriptPath = "$sourceFilePath\$($config.client)\scripts"
 
     }
 
@@ -742,7 +774,7 @@ function Export-IntuneConfig {
 
         if ($ConfType -eq 'Configuration' -or $ConfType -eq 'All') {
 
-            $configPath = "$FilePath\Intune-Plaster-Build\templates\config-profiles"
+            $configPath = "$FilePath\config-profiles"
 
             if (Test-Path $configPath) {
                 Write-Verbose "Exporting to $($configPath)"
@@ -766,7 +798,7 @@ function Export-IntuneConfig {
 
         if ($ConfType -eq 'Compliance' -or $ConfType -eq 'All') {
 
-            $compPath = "$FilePath\Intune-Plaster-Build\templates\compliance-policies"
+            $compPath = "$FilePath\compliance-policies"
 
             if (Test-Path $compPath) {
                 Write-Verbose "Exporting to $($compPath)"
@@ -791,7 +823,7 @@ function Export-IntuneConfig {
 
         if ($ConfType -eq 'Script' -or $ConfType -eq 'All') {
 
-            $scriptPath = "$FilePath\Intune-Plaster-Build\templates\scripts"
+            $scriptPath = "$FilePath\scripts"
 
             if (Test-Path $scriptPath) {
                 Write-Verbose "Exporting to $($scriptPath)"
