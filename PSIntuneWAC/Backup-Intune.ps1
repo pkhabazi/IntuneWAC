@@ -5,7 +5,7 @@ function Backup-Intune {
     This function is used to authenticate with the Graph API REST interface
     .DESCRIPTION
     The function authenticate with the Graph API Interface using username and password or using applicationID and Password
-    .PARAMETER OptionalParameters
+    .PARAMETER Param
      coming
 
     .EXAMPLE
@@ -15,14 +15,16 @@ function Backup-Intune {
     .NOTES
     NAME: Backup-Intune
     #>
+    [CmdletBinding()]
+    [OutputType([string])]
     param (
-        $OptionalParameters
+        [switch]$Param
     )
-    begin {
 
+    if ($Param) {
+        "Got param..."
     }
-    process {
-        Write-Output test
+    else {
+        "No param..."
     }
-
 }
