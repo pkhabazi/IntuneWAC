@@ -14,13 +14,13 @@ function Set-AdminConsent {
     #>
 
     [cmdletbinding()]
+    [OutputType([System.Collections.Hashtable])]
     param (
         [Parameter(Mandatory)]
         [string]$User
     )
 
     begin {
-
     }
 
     process {
@@ -43,12 +43,12 @@ function Set-AdminConsent {
         # Getting path to ActiveDirectory Assemblies
         # If the module count is greater than 1 find the latest version
         if ($aAdModule.count -gt 1) {
-            $Latest_Version = ($aAdModule | select version | Sort-Object)[-1]
-            $aAdModule = $aAdModule | ? { $_.version -eq $Latest_Version.version }
+            $latest_Version = ($aAdModule | Select-Object version | Sort-Object)[-1]
+            $aAdModule = $aAdModule | Where-Object version -eq $latest_Version.version
 
             # Checking if there are multiple versions of the same module found
             if ($aAdModule.count -gt 1) {
-                $aAdModule = $aAdModule | select -Unique
+                $aAdModule = $aAdModule | Select-Object -Unique
             }
             $adal = Join-Path $aAdModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.dll"
             $adalforms = Join-Path $aAdModule.ModuleBase "Microsoft.IdentityModel.Clients.ActiveDirectory.Platform.dll"
@@ -64,7 +64,7 @@ function Set-AdminConsent {
         $clientId = "d1ddf0e4-d672-4dae-b554-9d5bdfd93547"
         $redirectUri = "urn:ietf:wg:oauth:2.0:oob"
         $resourceAppIdURI = "https://graph.microsoft.com"
-        $authority = "https://login.microsoftonline.com/$Tenant"
+        $authority = "https://login.microsoftonline.com/$tenant"
 
         try {
             $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority

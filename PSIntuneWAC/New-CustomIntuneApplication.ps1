@@ -11,7 +11,7 @@ function New-CustomIntuneApplication {
     coming soon
 
     #>
-    [CmdletBinding()]
+    [cmdletbinding(SupportsShouldProcess=$true)]
     param (
         # Parameter help description
         [Parameter(mandatory = $true)]

@@ -1,14 +1,3 @@
-<#
-    .SYNOPSIS
-    Coming soon
-    .DESCRIPTION
-    fdsfe
-
-#>
-
-
-#region Functions
-
 function precheckAuthToken {
     <#
     .SYNOPSIS

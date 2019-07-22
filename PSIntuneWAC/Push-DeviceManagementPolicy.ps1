@@ -9,7 +9,6 @@ Function Push-DeviceManagementPolicy {
         [Parameter(Mandatory)]
         [ValidateSet('Configuration', 'Compliance', 'Script')]
         [string]$managementType
-
     )
 
     begin {

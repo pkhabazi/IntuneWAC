@@ -3,7 +3,7 @@ function Import-IntuneConfig {
     .SYNOPSIS
         some info
 
-    .DESCRIPTION
+    .Description
         some info
 
     .Parameter azDevOps
@@ -12,12 +12,14 @@ function Import-IntuneConfig {
     .Parameter SourceFilePath
         some info
 
+    .Parameter AuthToken
+        some info
+
     .Example
     Import-IntuneConfig -azDevOps $false SourceFilePath .\output
 
     .Example
     Import-IntuneConfig -azDevOps $false SourceFilePath .\output -verbose
-
     #>
 
     [cmdletbinding()]
@@ -29,7 +31,7 @@ function Import-IntuneConfig {
         [string]$SourceFilePath,
 
         [Parameter(Mandatory)]
-        [System.Object.Hashtable]$AuthToken
+        [Hashtable]$AuthToken
     )
 
     begin {
@@ -63,10 +65,10 @@ function Import-IntuneConfig {
                 $tmpJson = $null
                 $tmpJson = Get-Content $x.FullName -raw
                 $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Configuration
-                $result | ConvertTo-Yaml | Out-File -FilePath "$ENV:Temp\Configuration_$($x.Name -replace '.json','').yaml" -Encoding ascii
+                $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Configuration_$($x.Name -replace '.json','').yaml" -Encoding ascii
 
                 if ($azDevOps) {
-                    $confLog = "$ENV:Temp\Configuration_$($x.Name -replace '.json','').yaml"
+                    $confLog = "$env:temp\Configuration_$($x.Name -replace '.json','').yaml"
                     Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Device Configuration Profile - $($x.Name -replace '.json','');]$confLog"
                 }
             }
@@ -84,10 +86,10 @@ function Import-IntuneConfig {
                 $tmpJson = $null
                 $tmpJson = Get-Content $x.FullName -raw
                 $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Compliance
-                $result | ConvertTo-Yaml | Out-File -FilePath "$ENV:Temp\Compliance_$($x.Name -replace '.json','').yaml" -Encoding ascii -Force
+                $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Compliance_$($x.Name -replace '.json','').yaml" -Encoding ascii -Force
 
                 if ($azDevOps) {
-                    $compLog = "$ENV:Temp\Compliance_$($x.Name -replace '.json','').yaml"
+                    $compLog = "$env:temp\Compliance_$($x.Name -replace '.json','').yaml"
                     Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Device Compliance Policy - $($x.Name -replace '.json','');]$compLog"
                 }
             }
@@ -110,10 +112,9 @@ function Import-IntuneConfig {
                 $tmpEncScript = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$tmpScript"))
                 $tmpJson | Add-Member -MemberType NoteProperty -Name "scriptContent" -Value $tmpEncScript
                 $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json ($tmpJson | ConvertTo-Json -Depth 100) -managementType Script
-                $result | ConvertTo-Yaml | Out-File -FilePath "$ENV:Temp\Script_$($x.Name -replace '.json','').yaml" -Encoding ascii -Force
+                $result | ConvertTo-Yaml | Out-File -FilePath "$env:Temp\Script_$($x.Name -replace '.json','').yaml" -Encoding ascii -Force
 
                 if ($azDevOps) {
-                    $scriptLog = "$ENV:Temp\Script_$($x.Name -replace '.json','').yaml"
                     $scriptLogName = $x.Name | Split-Path
                     Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Scripts - $($x.Name -replace '.json','');]$scriptLogName"
                 }
