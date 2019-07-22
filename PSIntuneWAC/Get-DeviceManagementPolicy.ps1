@@ -1,26 +1,37 @@
 function Get-DeviceManagementPolicy {
     <#
     .SYNOPSIS
-    .
+        coming soon
+    .DESCRIPTION
+        coming soon
+    .PARAMETER AuthToken
+        Coming soon
+    .PARAMETER ManagementType
+        Coming soon
+    .EXAMPLE
+    Get-DeviceManagementPolicy -AuthToken -ManagementType
+    .NOTES
+    NAME: Get-DeviceManagementPolicy
     #>
+
     [cmdletbinding()]
     param
     (
         [Parameter(Mandatory = $true)]
-        [System.Object.Hashtable]$authToken,
+        [Hashtable]$AuthToken,
 
         [Parameter(Mandatory)]
         [ValidateSet('Configuration', 'Compliance', 'Script')]
-        [string]$managementType
+        [string]$ManagementType
 
     )
 
     begin {
-        precheckAuthToken -authtoken $authToken
+        precheckAuthToken -authtoken $AuthToken
     }
 
     process {
-        switch ($managementType) {
+        switch ($ManagementType) {
             "Configuration" {
                 $graphEndpoint = "deviceManagement/deviceConfigurations"
                 break
@@ -45,7 +56,7 @@ function Get-DeviceManagementPolicy {
             if ($managementType -eq "Script") {
                 Write-Verbose "Getting Device Management Script"
                 $response = @()
-                $tmpRes = Invoke-RestMethod -Method Get -Uri $uri -Headers $authToken | select-object value -ExpandProperty value
+                $tmpRes = Invoke-RestMethod -Method Get -Uri $uri -Headers $AuthToken | select-object value -ExpandProperty value
                 if ($tmpRes) {
                     foreach ($x in $tmpRes) {
                         $response += Invoke-RestMethod -Method Get -Uri "https://graph.microsoft.com/$graphApiVersion/$($graphEndpoint)/$($x.id)" -Headers $authToken -ContentType "application/json"
@@ -58,9 +69,9 @@ function Get-DeviceManagementPolicy {
             }
             else {
                 Write-Verbose "Getting Device Management Configuration and/or Comliance Policy"
-                $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $authToken | select-object value -ExpandProperty value
+                $response = Invoke-RestMethod -Method Get -Uri $uri -Headers $AuthToken | select-object value -ExpandProperty value
                 if ($response) {
-                    Write-Verbose "Found $($response.count) objects for $($managementType)"
+                    Write-Verbose "Found $($response.count) objects for $($ManagementType)"
                     return $response
                 }
                 else {

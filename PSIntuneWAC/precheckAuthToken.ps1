@@ -1,8 +1,22 @@
 function precheckAuthToken {
+    <#
+    .SYNOPSIS
+        coming soon
+    .DESCRIPTION
+        coming soon
+    .PARAMETER AuthToken
+        Coming soon
+    .EXAMPLE
+    precheckAuthToken -Authtoken $Authtoken
+    Authenticates you with the Graph API interface
+    .NOTES
+    NAME: precheckAuthToken
+    #>
 
     [cmdletbinding()]
     param (
-        $authtoken
+        [Parameter(Mandatory)]
+        [Hashtable]$Authtoken
     )
 
     begin {
@@ -11,19 +25,19 @@ function precheckAuthToken {
 
     process {
         # Checking if authToken exists before running authentication
-        if ($authToken) {
+        if ($Authtoken) {
             # Setting DateTime to Universal time to work in all timezones
             Write-Verbose "authToken exists, testing the validation"
-            $DateTime = (Get-Date).ToUniversalTime()
+            $dateTime = (Get-Date).ToUniversalTime()
             # If the authToken exists checking when it expires
-            $TokenExpires = ($authToken.ExExpiresin - $DateTime).Minutes
+            $tokenExpires = ($Authtoken.ExExpiresin - $dateTime).Minutes
 
-            if ($TokenExpires -le 0) {
-                Write-Error "Authentication Token expired $TokenExpires minutes ago, Run Get-AuthToken first!"
+            if ($tokenExpires -le 0) {
+                Write-Error "Authentication Token expired $tokenExpires minutes ago, Run Get-AuthToken first!"
 
             }
             else {
-                Write-Verbose "Token expires in $($TokenExpires) minutes"
+                Write-Verbose "Token expires in $($tokenExpires) minutes"
             }
         }
         else {
@@ -33,5 +47,4 @@ function precheckAuthToken {
         }
         #endregion
     }
-
 }
