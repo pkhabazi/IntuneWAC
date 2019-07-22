@@ -1,13 +1,21 @@
 function Compare-Policy {
     <#
     .SYNOPSIS
-    This function is meant for comparison before deployment to find differences
+        coming soon
     .DESCRIPTION
-    This function is meant for comparison before deployment to find differences
+        coming soon
+    .PARAMETER DeviceManagementPolicy
+        Coming soon
+    .EXAMPLE
+    Compare-Policy -DeviceManagementPolicy
+    .NOTES
+    NAME: Compare-Policy
     #>
-    param (
-        $DeviceManagementPolicy
 
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory)]
+        [string]$DeviceManagementPolicy
     )
 
     begin {
@@ -15,6 +23,6 @@ function Compare-Policy {
     }
 
     process {
-
+        Write-Output "$DeviceManagementPolicy"
     }
 }
