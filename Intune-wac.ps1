@@ -1,6 +1,9 @@
 <#
-.SYNOPSIS
-Coming soon
+    .SYNOPSIS
+    Coming soon
+    .DESCRIPTION
+    fdsfe
+
 #>
 
 
@@ -526,18 +529,34 @@ function Get-ObjectMembers {
 function Invoke-Build {
     <#
     .SYNOPSIS
-    This function will
-
+        This function will generate the json file that wille be uploaded to the graph
+    .DESCRIPTION
+        This function is meant to generete the JSON files that will be uploaded to the graph
+    .Parameter configfile
+        Path to the config File
+    .Parameter outputPath
+        Path where the JSON files will be saced
+    .Parameter templatePath
+        Path to the JSON template files that will be used
+    .Example
+        Invoke-Build -configFile .\settings.json -templatePath .\templates -outputPath .\output
+    .Example
+        Invoke-Build -configFile .\settings.json
     #>
+
     [cmdletbinding()]
     param (
+        [Parameter(Mandatory)]
         [string]$configFile,
+
+        [Parameter(Mandatory = $false)]
         [string]$outputPath,
+
+        [Parameter(Mandatory = $false)]
         [string]$templatePath
     )
 
     begin {
-        # Get-ObjectMembers
     }
 
     process {
@@ -552,7 +571,13 @@ function Invoke-Build {
         if (! $templatePath) { $templatePath = ".\templates" } ## Chage path later
 
 
-        if (!$outputPath) { $outputPath = ".\output\$($object.generalsettings.customerName)" } ## Change path later
+        if ($outputPath) {
+            $outputPath = "$($outputPath.TrimEnd('\'))\$($object.generalsettings.customerName)"
+        }
+        else {
+            $outputPath = "$($PSScriptRoot)\output\$($object.generalsettings.customerName)"
+        }
+        Write-Verbose "exporting alll setting to $outputPath"
 
         if (! (Test-Path $outputPath)) {
             try {
@@ -567,13 +592,14 @@ function Invoke-Build {
         $solutions = $object | Get-ObjectMembers
 
         ## Exclude geenralsettings
-        $solutions = $solutions | Where-Object {$_.key -notlike "generalSettings"}
+        $solutions = $solutions | Where-Object { $_.key -notlike "generalSettings" }
 
         foreach ($solution in $solutions) {
 
             $items = $solution.Value | Get-ObjectMembers
 
             $outputPathFull = "$outputPath\$($solution.Key)"
+            Write-Verbose "saving output to $outputPathFull"
 
             if (! (Test-Path $outputPathFull)) {
                 try {
@@ -589,12 +615,13 @@ function Invoke-Build {
                 if scripts then do something else
             #>
             if ($solution.key -eq 'scripts') {
-                Write-Output
+                Write-Verbose "found some scripts"
             }
             else {
                 foreach ($item in $items) {
 
                     $templateFilePath = "$templatePath\$($solution.Key)\$($item.key).json"
+                    Write-Verbose "saving template to $templateFilePath"
 
                     if (Test-Path $templateFilePath) {
                         try {
@@ -606,11 +633,9 @@ function Invoke-Build {
                         }
 
                         $objMembers = $item.Value | Get-ObjectMembers
-                        <#
-                         exclude general settings
-                         #>
+
                         foreach ($obj in $objMembers) {
-                            Write-Output  "name is : $($obj.key) en value is $($obj.Value)"
+                            Write-Verbose  "name is : $($obj.key) en value is $($obj.Value)"
                             $templateFile.$($obj.Key) = $obj.Value
                         }
 
@@ -628,21 +653,39 @@ function Invoke-Build {
                     }
                 }
             }
+            Write-Verbose ''
+            Write-Verbose ''
         }
     }
 }
 
 function Import-IntuneConfig {
+    <#
+    .SYNOPSIS
+        some info
+    .DESCRIPTION
+        some info
+    .Parameter azDevOps
+        some info
+    .Parameter sourceFilePath
+        some info
+    .Example
+    Import-IntuneConfig -azDevOps $false sourceFilePath .\output
+    .Example
+    Import-IntuneConfig -azDevOps $false sourceFilePath .\output -verbose
+
+    #>
 
     [cmdletbinding()]
     param (
-        [string]$yamlConfig,
+        [Parameter(Mandatory)]
         [switch]$azDevOps,
+
+        [Parameter(Mandatory)]
         [string]$sourceFilePath
     )
 
     begin {
-
         if ($sourceFilePath) { $sourceFilePath = $sourceFilePath.TrimEnd('\') } else { $sourceFilePath = $PSScriptRoot } # what to do with else, set default path of trow error?
 
         # does path need any test, because get-childitem is in try catch below?
@@ -759,7 +802,7 @@ function Export-IntuneConfig {
 
     param (
         # Parameter help description
-        [Parameter(mandatory = $false)]
+        [Parameter(Mandatory = $false)]
         [string]$FilePath,
 
         [Parameter(Mandatory)]
