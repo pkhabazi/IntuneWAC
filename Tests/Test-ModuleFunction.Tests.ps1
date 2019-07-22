@@ -160,7 +160,8 @@ foreach ($file in Get-ChildItem -Path "$PSScriptRoot\..\$ModuleName\$ModuleName.
                     continue
                 }
                 It "Uses camelCase for variable $variableName" {
-                    $variableName | Should -MatchExactly '^[a-z]'
+                    $variableName | Should -MatchExactly '^[a-z_PSScriptRoot]'
+                    #$variableName | Should -MatchExactly '^([a-z][0-9]?)+(([A-Z]{1}([a-z]|[0-9]){1}([a-z]|[0-9]?)+)?)+'
                 }
             }
 
