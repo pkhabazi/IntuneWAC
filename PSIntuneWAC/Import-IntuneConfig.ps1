@@ -1,20 +1,44 @@
 function Import-IntuneConfig {
+    <#
+    .SYNOPSIS
+        some info
+
+    .DESCRIPTION
+        some info
+
+    .Parameter azDevOps
+        some info
+
+    .Parameter SourceFilePath
+        some info
+
+    .Example
+    Import-IntuneConfig -azDevOps $false SourceFilePath .\output
+
+    .Example
+    Import-IntuneConfig -azDevOps $false SourceFilePath .\output -verbose
+
+    #>
 
     [cmdletbinding()]
     param (
-        [string]$yamlConfig,
-        [switch]$azDevOps,
-        [string]$sourceFilePath
+        [Parameter(Mandatory)]
+        [switch]$AzDevOps,
+
+        [Parameter(Mandatory)]
+        [string]$SourceFilePath,
+
+        [Parameter(Mandatory)]
+        [System.Object.Hashtable]$AuthToken
     )
 
     begin {
-
-        if ($sourceFilePath) { $sourceFilePath = $sourceFilePath.TrimEnd('\') } else { $sourceFilePath = $PSScriptRoot } # what to do with else, set default path of trow error?
+        if ($SourceFilePath) { $SourceFilePath = $SourceFilePath.TrimEnd('\') } else { $SourceFilePath = $PSScriptRoot } # what to do with else, set default path of trow error?
 
         # does path need any test, because get-childitem is in try catch below?
-        $deviceConfigurationPath = "$sourceFilePath\configuration"
-        $deviceCompliancePath = "$sourceFilePath\compliance"
-        $deviceScriptPath = "$sourceFilePath\$($config.client)\scripts"
+        $deviceConfigurationPath = "$SourceFilePath\configurationPolicies"
+        $deviceCompliancePath = "$SourceFilePath\compliancePolicies"
+        $deviceScriptPath = "$SourceFilePath\$($config.client)\scripts"
     }
 
     process {
@@ -38,7 +62,7 @@ function Import-IntuneConfig {
             foreach ($x in $deviceConfiguration) {
                 $tmpJson = $null
                 $tmpJson = Get-Content $x.FullName -raw
-                $result = Push-DeviceManagementPolicy -authToken $authToken -json $tmpJson -managementType Configuration
+                $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Configuration
                 $result | ConvertTo-Yaml | Out-File -FilePath "$ENV:Temp\Configuration_$($x.Name -replace '.json','').yaml" -Encoding ascii
 
                 if ($azDevOps) {
@@ -59,7 +83,7 @@ function Import-IntuneConfig {
             foreach ($x in (Get-ChildItem $deviceCompliance)) {
                 $tmpJson = $null
                 $tmpJson = Get-Content $x.FullName -raw
-                $result = Push-DeviceManagementPolicy -authToken $authToken -json $tmpJson -managementType Compliance
+                $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Compliance
                 $result | ConvertTo-Yaml | Out-File -FilePath "$ENV:Temp\Compliance_$($x.Name -replace '.json','').yaml" -Encoding ascii -Force
 
                 if ($azDevOps) {
@@ -85,7 +109,7 @@ function Import-IntuneConfig {
                 $tmpScript = Get-Content "$($x.FullName)\$($x.Name).ps1" -raw
                 $tmpEncScript = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$tmpScript"))
                 $tmpJson | Add-Member -MemberType NoteProperty -Name "scriptContent" -Value $tmpEncScript
-                $result = Push-DeviceManagementPolicy -authToken $authToken -json ($tmpJson | ConvertTo-Json -Depth 100) -managementType Script
+                $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json ($tmpJson | ConvertTo-Json -Depth 100) -managementType Script
                 $result | ConvertTo-Yaml | Out-File -FilePath "$ENV:Temp\Script_$($x.Name -replace '.json','').yaml" -Encoding ascii -Force
 
                 if ($azDevOps) {

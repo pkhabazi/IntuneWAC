@@ -1,59 +1,59 @@
-function Get-AuthToken {
+function Get-authToken {
     <#
     .SYNOPSIS
     This function is used to authenticate with the Graph API REST interface
     .DESCRIPTION
     The function authenticate with the Graph API Interface using username and password or using applicationID and Password
-    .PARAMETER userName
+    .PARAMETER UserName
      coming
-    .PARAMETER password
+    .PARAMETER Password
     coming
-    .PARAMETER clientId
+    .PARAMETER ClientId
     coming
-    .PARAMETER clientSecret
+    .PARAMETER ClientSecret
     coming
-    .PARAMETER tenantId
+    .PARAMETER TenantId
     coming
-    .PARAMETER refresh
+    .PARAMETER Refresh
     coming
     .PARAMETER Authtype
     coming
 
     .EXAMPLE
-    Get-AuthToken -clientId $clientId -clientSecret $clientSecret -tenantId $tenantId -Authtype Application
+    Get-authToken -clientId $clientId -clientSecret $clientSecret -tenantId $tenantId -Authtype Application
     Authenticates you with the Graph API interface
     .EXAMPLE
-    Get-AuthToken -userName "pouyan.graph@condiciocloud.onmicrosoft.com" -password "Ehk58HV^3ab@lsp3" -tenantId $tenantId -Authtype User -Verbose
+    Get-authToken -userName "pouyan.graph@condiciocloud.onmicrosoft.com" -password "Ehk58HV^3ab@lsp3" -tenantId $tenantId -Authtype User -Verbose
     Authenticates you with the Graph API interface
     .NOTES
-    NAME: Get-AuthToken
+    NAME: Get-authToken
     #>
 
     [cmdletbinding()]
     param (
         # Parameter help description
         [Parameter(mandatory = $false)]
-        [string]$userName,
+        [string]$UserName,
 
         # Parameter help description
         [Parameter(mandatory = $false)]
-        [string]$password,
+        [string]$Password,
 
         # Parameter help description
         [Parameter(mandatory = $false)]
-        [string]$clientId,
+        [string]$ClientId,
 
         # Parameter help description
         [Parameter(mandatory = $false)]
-        [string]$clientSecret,
+        [string]$ClientSecret,
 
         # Parameter help description
         [Parameter(mandatory = $true)]
-        [string]$tenantId,
+        [string]$TenantId,
 
         # Parameter help description
         [Parameter(mandatory = $false)]
-        [string]$refresh,
+        [string]$Refresh,
 
         # Parameter help description
         [Parameter(Mandatory = $true)]
@@ -66,53 +66,53 @@ function Get-AuthToken {
 
     process {
 
-        $resourceURL = "https://graph.microsoft.com"
+        $resourceUri = "https://graph.microsoft.com"
 
         switch ($Authtype) {
             "Application" {
-                $_AuthType = 'Application'
+                $AuthType = 'Application'
             }
             "User" {
-                $_AuthType = 'User'
+                $AuthType = 'User'
             }
             Default { }
         }
 
-        if ($clientId -eq '') {
-            $clientId = "d1ddf0e4-d672-4dae-b554-9d5bdfd93547"
-            Write-Verbose "Using default Client ID: $($clientId)"
+        if ($ClientId -eq '') {
+            $ClientId = "d1ddf0e4-d672-4dae-b554-9d5bdfd93547"
+            Write-Verbose "Using default Client ID: $($ClientId)"
         }
         else {
-            Write-Verbose "Using Custom Client ID: $($clientId)"
+            Write-Verbose "Using Custom Client ID: $($ClientId)"
         }
 
         ###############################
-        if ($_AuthType -eq 'User') {
+        if ($AuthType -eq 'User') {
             Write-Verbose "Loging in with Userame and Password"
 
-            if ($refresh) {
+            if ($Refresh) {
                 $body = @{
-                    resource      = $resourceURL
-                    client_id     = $clientId
+                    resource      = $resourceUri
+                    client_id     = $ClientId
                     grant_type    = "refresh_token"
-                    username      = $userName
+                    username      = $UserName
                     scope         = "openid"
-                    password      = $password
-                    refresh_token = $refresh
+                    password      = $Password
+                    refresh_token = $Refresh
                 }
             }
             else {
                 $body = @{
-                    resource   = $resourceURL
-                    client_id  = $clientId
+                    resource   = $resourceUri
+                    client_id  = $ClientId
                     grant_type = "password"
-                    username   = $userName
+                    username   = $UserName
                     scope      = "openid"
-                    password   = $password
+                    password   = $Password
                 }
             }
 
-            $uri = "https://login.microsoftonline.com/$tenantId/oauth2/token"
+            $uri = "https://login.microsoftonline.com/$TenantId/oauth2/token"
 
             try {
                 Write-Verbose "Connecting to uri: $($uri)"
@@ -142,29 +142,29 @@ function Get-AuthToken {
         }
 
         ###############################
-        if ($_AuthType -eq 'Application') {
+        if ($AuthType -eq 'Application') {
 
             Write-Verbose "Logging in with appplicationID and token"
 
-            if ($refresh) {
+            if ($Refresh) {
                 $body = @{
-                    client_id     = $clientId
+                    client_id     = $ClientId
                     scope         = "https://graph.microsoft.com/.default"
-                    client_secret = $clientSecret
+                    client_secret = $ClientSecret
                     grant_type    = "refresh_token"
                     refresh_token = $refresh
                 }
             }
             else {
                 $body = @{
-                    client_id     = $clientId
+                    client_id     = $ClientId
                     scope         = "https://graph.microsoft.com/.default"
-                    client_secret = $clientSecret
+                    client_secret = $ClientSecret
                     grant_type    = "client_credentials"
                 }
             }
 
-            $uri = "https://login.microsoftonline.com/$tenantId/oauth2/v2.0/token"
+            $uri = "https://login.microsoftonline.com/$TenantId/oauth2/v2.0/token"
             $response = Invoke-RestMethod -Method post -Uri $uri -ContentType "application/x-www-form-urlencoded" -Body $body -UseBasicParsing -ErrorAction SilentlyContinue
 
             if ($response.Access_Token) {
