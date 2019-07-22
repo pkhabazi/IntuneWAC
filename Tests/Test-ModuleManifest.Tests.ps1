@@ -60,7 +60,8 @@ foreach ($manifest in Get-ChildItem $PSScriptRoot\..\$ModuleName\$ModuleName.psd
                         $astItem
                     )
                     $astItem -is [FunctionDefinitionAst] -and
-                    $astItem.Name -like '*-OP*'
+                    #$astItem.Name -like '*-OP*'
+                    $astItem.Name -like '*'
                 }
 
                 $functionNames = $ast.FindAll(
