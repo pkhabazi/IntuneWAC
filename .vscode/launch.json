@@ -8,15 +8,15 @@
             "name": "Test-ModuleManifest",
             "type": "PowerShell",
             "request": "launch",
-            "script": "${workspaceFolder}/tests/Test-ModuleManifest.Tests.ps1",
-            "args": []
+            "script": "Invoke-Pester",
+            "args": ["${workspaceFolder}/tests/Test-ModuleManifest.Tests.ps1"]
         },
         {
             "name": "Test-ModuleFunction",
             "type": "PowerShell",
             "request": "launch",
-            "script": "${workspaceFolder}/tests/Test-ModuleFunction.Tests.ps1",
-            "args": []
+            "script": "Invoke-Pester",
+            "args": ["${workspaceFolder}/Tests/Test-ModuleFunction.Tests.ps1", "-Show Failed"]
         }
     ]
 }
