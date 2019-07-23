@@ -9,14 +9,14 @@
             "type": "PowerShell",
             "request": "launch",
             "script": "Invoke-Pester",
-            "args": ["${workspaceFolder}/tests/Test-ModuleManifest.Tests.ps1"]
+            "args": ["${workspaceFolder}/tests/Test-ModuleManifest.Tests.ps1", "-Show All"]
         },
         {
             "name": "Test-ModuleFunction",
             "type": "PowerShell",
             "request": "launch",
             "script": "Invoke-Pester",
-            "args": ["${workspaceFolder}/Tests/Test-ModuleFunction.Tests.ps1", "-Show Failed"]
+            "args": ["${workspaceFolder}/Tests/Test-ModuleFunction.Tests.ps1", "-Show All"]
         }
     ]
 }
