@@ -70,7 +70,7 @@ Description = 'coming soon'
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = 'Backup-Intune', 'Compare-Policy', 'Export-IntuneConfig',
-               'Get-AuthToken', 'Get-DeviceManagementPolicy', 'Get-ObjectMembers',
+               'Get-AuthToken', 'Get-DeviceManagementPolicy', 'Get-ObjectMember',
                'Import-IntuneConfig', 'Invoke-Build', 'New-CustomIntuneApplication',
                'precheckAuthToken', 'Push-DeviceManagementPolicy', 'Set-AdminConsent'
 

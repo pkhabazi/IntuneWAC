@@ -1,4 +1,4 @@
-function Get-ObjectMembers {
+function Get-ObjectMember {
     <#
     .SYNOPSIS
         coming soon

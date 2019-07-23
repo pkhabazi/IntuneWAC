@@ -61,14 +61,14 @@ function Invoke-Build {
             }
         }
 
-        $solutions = $object | Get-ObjectMembers
+        $solutions = $object | Get-ObjectMember
 
         ## Exclude geenralsettings
         $solutions = $solutions | Where-Object { $_.key -notlike "generalSettings" }
 
         foreach ($solution in $solutions) {
 
-            $items = $solution.Value | Get-ObjectMembers
+            $items = $solution.Value | Get-ObjectMember
 
             $outputPathFull = "$OutputPath\$($solution.Key)"
             Write-Verbose "saving output to $outputPathFull"
@@ -104,7 +104,7 @@ function Invoke-Build {
                             Write-Error "Unable to read json from $($templateFilePath)"
                         }
 
-                        $objMembers = $item.Value | Get-ObjectMembers
+                        $objMembers = $item.Value | Get-ObjectMember
 
                         foreach ($obj in $objMembers) {
                             Write-Verbose  "name is : $($obj.key) en value is $($obj.Value)"
