@@ -26,7 +26,7 @@ function Set-AdminConsent {
     process {
         $userUpn = New-Object "System.Net.Mail.MailAddress" -ArgumentList $User
         $tenant = $userUpn.Host
-        Write-Output "Checking for AzureAD module..."
+        Write-Verbose "Checking for AzureAD module..."
         $aAdModule = Get-Module -Name "AzureAD" -ListAvailable -ErrorAction SilentlyContinue
 
         if ($null -eq $aAdModule) {

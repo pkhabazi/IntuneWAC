@@ -103,7 +103,8 @@ foreach ($file in Get-ChildItem -Path "$PSScriptRoot\..\$ModuleName\$ModuleName.
                 $cmdProperties.CmdletBinding | Should -BeTrue
             }
 
-            If ($cmdProperties.Verb -in 'New', 'Remove', 'Set', 'Stop') {
+            #If ($cmdProperties.Verb -in 'New', 'Remove', 'Set', 'Stop') {
+            If ($cmdProperties.Verb -in 'New', 'Remove', 'Stop') {
                 It 'Should support WhatIf' {
                     [bool]$cmdProperties.Parameters['WhatIf'] | Should -BeTrue
                 }
