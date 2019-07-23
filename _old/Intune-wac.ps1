@@ -769,7 +769,6 @@ function Import-IntuneConfig {
 
     }
 }
-
 function Export-IntuneConfig {
     <#
     .SYNOPSIS
