@@ -52,8 +52,8 @@
                 "passwordExpirationDays":  180,
                 "passwordMinimumLength":  6
             }
-          ],
-          "DCO-AND": [
+        ],
+        "DCO-AND": [
             {
                 "description":  "Device Compliance Policy for Android.",
                 "displayName":  "DCO-AND",
@@ -64,7 +64,7 @@
                 "passwordPreviousPasswordBlockCount":  3,
                 "osMinimumVersion":  "4.4"
             }
-          ]
+        ]
     },
     "scripts": {
         "Script01": ""
