@@ -1,9 +1,0 @@
-{
-    "@odata.context":  "https://graph.microsoft.com/Beta/$metadata#deviceManagement/deviceManagementScripts/$entity",
-    "displayName":  "Wallpaper Scaling",
-    "description":  "",
-    "runAsAccount":  "system",
-    "enforceSignatureCheck":  false,
-    "fileName":  "Set-WallpaperStyle.ps1",
-    "runAs32Bit":  false
-}
