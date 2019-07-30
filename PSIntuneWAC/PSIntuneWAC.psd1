@@ -12,7 +12,7 @@
 RootModule = 'PSIntuneWAC.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.1'
+ModuleVersion = '0.8.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -24,10 +24,10 @@ GUID = '1db89920-6552-4b78-9a59-04f477557bda'
 Author = 'Pkhabazi'
 
 # Company or vendor of this module
-CompanyName = 'Condicio'
+CompanyName = ''
 
 # Copyright statement for this module
-Copyright = '(c) 2019 Condicio. All rights reserved.'
+Copyright = '(c) 2019 Pkhabazi. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'coming soon'
