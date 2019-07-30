@@ -1,26 +1,94 @@
-# Introduction
+# Microsoft Intune
 
-TODO: Give a short introduction of your project. Let this section explain the objectives or the motivation behind this project.
+Microsoft Intune is a cloud-based service in the enterprise mobility management (EMM) space that helps enable your workforce to be productive while keeping your corporate data protected. Similar to other Azure services, Microsoft Intune is available in the Azure portal. With Intune, you can:
+
+* Manage the mobile devices and PCs your workforce uses to access company data.
+* Manage the mobile apps your workforce uses.
+* Protect your company information by helping to control the way your workforce accesses and shares it.
+* Ensure devices and apps are compliant with company security requirements.
+
+ [read more](https://docs.microsoft.com/en-us/intune/what-is-intune)
+
+## Microsoft Graph for Intune
+
+The Microsoft Graph API for Intune enables programmatic access to Intune information for your tenant; the API performs the same Intune operations as those available through the Azure Portal.
+
+For mobile device management (MDM) scenarios, the Microsoft Graph API for Intune supports standalone deployments; Intune [hybrid deployments](https://docs.microsoft.com/en-us/sccm/mdm/understand/choose-between-standalone-intune-and-hybrid-mobile-device-management) are not supported.
+
+## PowerShell Module
+
+This PowerShell module is created to implement a Workspace As Code (WAC) principe, which means:
+
+> WAC is the process of managing and provisioning end user workspace through machine-readable definition files, rather than interactive configuration tools.
 
 ## Getting Started
 
-TODO: Guide users through getting your code up and running on their own system. In this section you can talk about:
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-1. Installation process
-2. Software dependencies
-3. Latest releases
-4. API references
+### Prerequisities
 
-## Build and Test
+* nothing for now
 
-TODO: Describe and show how to build your code and run the tests.
+### Installing
 
-## Contribute
+A step by step Guid how to install module
 
-TODO: Explain how other users and developers can contribute to make your code better.
+```PowerShell
+Install-Module .\PSIntuneWAC -Force
+```
 
-If you want to learn more about creating good readme files then refer the following [guidelines](https://docs.microsoft.com/en-us/azure/devops/repos/git/create-a-readme?view=azure-devops). You can also seek inspiration from the below readme files:
+### Usage
 
-- [ASP.NET Core](https://github.com/aspnet/Home)
-- [Visual Studio Code](https://github.com/Microsoft/vscode)
-- [Chakra Core](https://github.com/Microsoft/ChakraCore)
+#### Parameters
+
+List the different parameters available
+
+## Running the tests
+
+Explain how to run the automated tests for this system
+
+### Break down into end to end tests
+
+Explain what these tests test and why
+
+```
+Give an example
+```
+
+### And coding style tests
+
+Explain what these tests test and why
+
+```
+Give an example
+```
+
+## Find us
+
+* [GitHub](https://github.com/pkhabazi/intune)
+* [Blog](https://pkm-technology.com)
+
+## Contributing
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) for details on our code of conduct, and the process for submitting pull requests to us.
+
+## Versioning
+
+We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/pkhabazi/intune/tags).
+
+## Authors
+
+* **Pouyan Khabazi** - *Initial work* - [GitHub](https://github.com/pkhabazi)
+* **Frans Oudendorp** - *Initial work* - [GitHub](https://github.com/foudendorp)
+
+See also the list of [contributors](https://github.com/pkhabazi/intune/contributors) who participated in this project.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details
+
+## Acknowledgments
+
+* Hat tip to anyone whose code was used
+* Inspiration
+* etc
