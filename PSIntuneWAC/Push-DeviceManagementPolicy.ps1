@@ -24,7 +24,7 @@ Function Push-DeviceManagementPolicy {
         [string]$Json,
 
         [Parameter(Mandatory)]
-        [ValidateSet('Configuration', 'Compliance', 'Script')]
+        [ValidateSet('Configuration', 'Compliance', 'Script', 'Groups')]
         [string]$ManagementType,
 
         [Parameter(Mandatory = $false)]
@@ -39,27 +39,30 @@ Function Push-DeviceManagementPolicy {
         switch ($ManagementType) {
             "Configuration" {
                 $graphEndpoint = "deviceManagement/deviceConfigurations"
-                break
+                $graphApiVersion = "Beta"
             }
             "Compliance" {
                 $graphEndpoint = "deviceManagement/deviceCompliancePolicies"
-                break
+                $graphApiVersion = "Beta"
             }
             "Script" {
                 $graphEndpoint = "deviceManagement/deviceManagementScripts"
-                break
+                $graphApiVersion = "Beta"
+            }
+            "Groups" {
+                $graphEndpoint = "groups"
+                $graphApiVersion = "Beta"
             }
         }
 
-        $graphApiVersion = "Beta"
         $uri = "https://graph.microsoft.com/$graphApiVersion/$($graphEndpoint)"
 
         try {
             Write-Verbose "Connecting to endpoint: $($graphEndpoint.Split('/')[1])"
             Write-Verbose "Connecting using fully uri: $($uri)"
 
-            $res = Invoke-RestMethod -Uri $uri -Headers $AuthToken -Method Post -Body $json -ContentType "application/json"
-            return $res
+            $result = Invoke-RestMethod -Uri $uri -Headers $AuthToken -Method Post -Body $Json -ContentType "application/json"
+            return $result
         }
         catch {
             $ex = $_.Exception
@@ -70,7 +73,7 @@ Function Push-DeviceManagementPolicy {
             $responseBody = $reader.ReadToEnd()
 
             Write-Verbose "Request to $uri failed with HTTP Status $($ex.Response.StatusCode) $($ex.Response.StatusDescription)"
-            Write-Error "Response content:`n$responseBody" -ErrorAction Stop
+            Write-Error "Response content: ($responseBody)" -ErrorAction Stop
         }
     }
 }

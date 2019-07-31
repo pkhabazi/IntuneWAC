@@ -145,7 +145,7 @@ function Import-IntuneConfig {
                 $tmpJson = Get-Content $item.FullName -Raw
                 if (Test-Json $tmpJson) {
                     $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType groups
-                    $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Compliance_$($x.Name -replace '.json','').yaml" -Encoding ascii -Force
+                    $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Compliance_$($item.Name -replace '.json','').yaml" -Encoding ascii -Force
 
                     if ($azDevOps) {
                         $compLog = "$env:temp\Compliance_$($x.Name -replace '.json','').yaml"
