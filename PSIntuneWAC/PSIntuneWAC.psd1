@@ -21,13 +21,13 @@ ModuleVersion = '0.8.0'
 GUID = '1db89920-6552-4b78-9a59-04f477557bda'
 
 # Author of this module
-Author = 'Pkhabazi'
+Author = 'PKhabazi'
 
 # Company or vendor of this module
-CompanyName = ''
+CompanyName = 'PKhabazi'
 
 # Copyright statement for this module
-Copyright = '(c) 2019 Pkhabazi. All rights reserved.'
+Copyright = '(c) 2019 PKhabazi. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'coming soon'
