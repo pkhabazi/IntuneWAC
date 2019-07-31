@@ -41,6 +41,7 @@ function Import-IntuneConfig {
         $deviceConfigurationPath = "$SourceFilePath\configurationPolicies"
         $deviceCompliancePath = "$SourceFilePath\compliancePolicies"
         $deviceScriptPath = "$SourceFilePath\$($config.client)\scripts"
+        $groupsPath = "$SourceFilePath\groups"
     }
 
     process {
@@ -50,6 +51,7 @@ function Import-IntuneConfig {
             $deviceConfiguration = Get-ChildItem $deviceConfigurationPath
             $deviceCompliance = Get-ChildItem $deviceCompliancePath
             $deviceScript = Get-ChildItem $deviceScriptPath
+            $groups = Get-ChildItem $groupsPath
         }
         catch {
             Write-Verbose $_
@@ -61,15 +63,21 @@ function Import-IntuneConfig {
         ## Begin of Device configuration upload to intune graph
         Write-Verbose "Uploading Device configuration profiles to Intune.."
         if ($deviceConfiguration.count -ge 1) {
-            foreach ($x in $deviceConfiguration) {
+            foreach ($item in $deviceConfiguration) {
                 $tmpJson = $null
-                $tmpJson = Get-Content $x.FullName -raw
-                $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Configuration
-                $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Configuration_$($x.Name -replace '.json','').yaml" -Encoding ascii
+                $tmpJson = Get-Content $item.FullName -raw
 
-                if ($azDevOps) {
-                    $confLog = "$env:temp\Configuration_$($x.Name -replace '.json','').yaml"
-                    Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Device Configuration Profile - $($x.Name -replace '.json','');]$confLog"
+                if (Test-Json $tmpJson) {
+                    $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Configuration
+                    $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Configuration_$($item.Name -replace '.json','').yaml" -Encoding ascii
+
+                    if ($azDevOps) {
+                        $confLog = "$env:temp\Configuration_$($item.Name -replace '.json','').yaml"
+                        Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Device Configuration Profile - $($item.Name -replace '.json','');]$confLog"
+                    }
+                }
+                else {
+                    Write-Error "JSON test filed for $($item.FullName)"
                 }
             }
         }
@@ -82,15 +90,21 @@ function Import-IntuneConfig {
         ## Begin of Device Compliance upload to intune graph
         Write-Verbose "Uploading Device compliance policies to Intune.."
         if ($deviceCompliance.count -ge 1) {
-            foreach ($x in (Get-ChildItem $deviceCompliance)) {
+            foreach ($item in $deviceCompliance) {
                 $tmpJson = $null
-                $tmpJson = Get-Content $x.FullName -raw
-                $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Compliance
-                $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Compliance_$($x.Name -replace '.json','').yaml" -Encoding ascii -Force
+                $tmpJson = Get-Content $item.FullName -raw
 
-                if ($azDevOps) {
-                    $compLog = "$env:temp\Compliance_$($x.Name -replace '.json','').yaml"
-                    Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Device Compliance Policy - $($x.Name -replace '.json','');]$compLog"
+                if (Test-Json $tmpJson) {
+                    $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Compliance
+                    $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Compliance_$($item.Name -replace '.json','').yaml" -Encoding ascii -Force
+
+                    if ($azDevOps) {
+                        $compLog = "$env:temp\Compliance_$($item.Name -replace '.json','').yaml"
+                        Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Device Compliance Policy - $($item.Name -replace '.json','');]$compLog"
+                    }
+                }
+                else {
+                    Write-Error "JSON test filed for $($item.FullName)"
                 }
             }
         }
@@ -123,6 +137,30 @@ function Import-IntuneConfig {
         else {
             Write-Verbose "No Device configuration profiles found in $($deviceScriptPath) for upload"
         }
+
+        ## Begin of Groups creation to intune graph
+        if ($groups.Count -ge 1) {
+            foreach ($item in $groups) {
+                $tmpJson = $null
+                $tmpJson = Get-Content $item.FullName -Raw
+                if (Test-Json $tmpJson) {
+                    $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType groups
+                    $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Compliance_$($x.Name -replace '.json','').yaml" -Encoding ascii -Force
+
+                    if ($azDevOps) {
+                        $compLog = "$env:temp\Compliance_$($x.Name -replace '.json','').yaml"
+                        Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Device Compliance Policy - $($x.Name -replace '.json','');]$compLog"
+                    }
+                }
+                else {
+                    Write-Error "JSON test filed for $($item.FullName)"
+                }
+            }
+        }
+        else {
+            Write-Verbose "No Grous profiles found in $($groupsPath) for upload"
+        }
+
         ## End of Scripts upload
 
     }

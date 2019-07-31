@@ -45,7 +45,7 @@
         "DCO-WIN": [
             {
                 "description":  "Device Compliance Policy for Windows 10.",
-                "displayName":  "DCO-WIN",
+                "displayName":  "DCO-WIN2",
                 "passwordRequired":  true,
                 "passwordBlockSimple":  true,
                 "passwordMinutesOfInactivityBeforeLock":  5,
@@ -68,5 +68,17 @@
     },
     "scripts": {
         "Script01": ""
-    }
+    },
+    "groups": [
+        {
+            "description": "group01",
+            "displayName": "group01",
+            "membershipRule": "user.displayName -contains 'AA'"
+        },
+        {
+            "description": "group02",
+            "displayName": "group02",
+            "membershipRule": "user.displayName -contains 'AA'"
+        }
+    ]
 }
