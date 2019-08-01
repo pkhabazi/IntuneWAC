@@ -1,9 +1,9 @@
 {
     "generalSettings":
         {
-        "customerName": "pkm",
+        "customerName": "CondicioCloud",
         "outputPath": "",
-        "tenantDomain": "pkm.onmicrosoft.com"
+        "tenantDomain": "condiciocloud.onmicrosoft.com"
         },
     "configurationPolicies": {
         "DC-WIN-DR": [
@@ -71,14 +71,9 @@
     },
     "groups": [
         {
-            "description": "group01",
-            "displayName": "group01",
-            "membershipRule": "user.displayName -contains 'AA'"
-        },
-        {
-            "description": "group02",
-            "displayName": "group02",
-            "membershipRule": "user.displayName -contains 'AA'"
+            "description": "All Autopilot devices",
+            "displayName": "Default all Autopilot devices",
+            "membershipRule": "(device.devicePhysicalIDs -any _ -contains '[ZTDId]')"
         }
     ]
 }
