@@ -16,16 +16,16 @@ function Import-IntuneConfig {
         some info
 
     .Example
-    Import-IntuneConfig -azDevOps $false SourceFilePath .\output
+    Import-IntuneConfig -azDevOps $false -SourceFilePath .\output -AuthToken $token
 
     .Example
-    Import-IntuneConfig -azDevOps $false SourceFilePath .\output -verbose
+    Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\CondicioCloud\ -AuthToken $token -verbose
     #>
 
     [cmdletbinding()]
     param (
         [Parameter(Mandatory)]
-        [switch]$AzDevOps,
+        [bool]$AzDevOps,
 
         [Parameter(Mandatory)]
         [string]$SourceFilePath,
@@ -48,10 +48,10 @@ function Import-IntuneConfig {
 
         ## Try to get all json files, this files will be uploaded to graph
         try {
-            $deviceConfiguration = Get-ChildItem $deviceConfigurationPath
-            $deviceCompliance = Get-ChildItem $deviceCompliancePath
-            $deviceScript = Get-ChildItem $deviceScriptPath
-            $groups = Get-ChildItem $groupsPath
+            $deviceConfiguration = Get-ChildItem $deviceConfigurationPath -ErrorAction SilentlyContinue
+            $deviceCompliance = Get-ChildItem $deviceCompliancePath -ErrorAction SilentlyContinue
+            $deviceScript = Get-ChildItem $deviceScriptPath -ErrorAction SilentlyContinue
+            $groups = Get-ChildItem $groupsPath -ErrorAction SilentlyContinue
         }
         catch {
             Write-Verbose $_
@@ -143,18 +143,20 @@ function Import-IntuneConfig {
             foreach ($item in $groups) {
                 $tmpJson = $null
                 $tmpJson = Get-Content $item.FullName -Raw
-                if (Test-Json $tmpJson) {
-                    $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType groups
-                    $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Compliance_$($item.Name -replace '.json','').yaml" -Encoding ascii -Force
+                #if (Test-Json $tmpJson) {
+                $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType groups
+                $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Compliance_$($item.Name -replace '.json','').yaml" -Encoding ascii -Force
 
-                    if ($azDevOps) {
-                        $compLog = "$env:temp\Compliance_$($x.Name -replace '.json','').yaml"
-                        Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Device Compliance Policy - $($x.Name -replace '.json','');]$compLog"
-                    }
+                if ($azDevOps) {
+                    $compLog = "$env:temp\Compliance_$($x.Name -replace '.json','').yaml"
+                    Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Device Compliance Policy - $($x.Name -replace '.json','');]$compLog"
+                }
+                <#
                 }
                 else {
                     Write-Error "JSON test filed for $($item.FullName)"
                 }
+                #>
             }
         }
         else {
