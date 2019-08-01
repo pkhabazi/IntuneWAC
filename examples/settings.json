@@ -73,7 +73,7 @@
         {
             "description": "All Autopilot devices",
             "displayName": "Default all Autopilot devices",
-            "membershipRule": "(device.devicePhysicalIDs -any _ -contains '[ZTDId]')"
+            "membershipRule": "(device.devicePhysicalIds -any _ -contains \"[ZTDId]\")"
         }
     ]
 }
