@@ -1,4 +1,3 @@
-
 function Backup-Intune {
     <#
     .SYNOPSIS

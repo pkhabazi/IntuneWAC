@@ -1,4 +1,4 @@
-Function Push-DeviceManagementPolicy {
+function Push-DeviceManagementPolicy {
     <#
     .SYNOPSIS
         coming soon
