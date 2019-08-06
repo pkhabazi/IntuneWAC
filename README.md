@@ -89,6 +89,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
+* This PS module is based on initial code and ideas of [Ben Reader](https://github.com/tabs-not-spaces)
 * Hat tip to anyone whose code was used
 * Inspiration
-* etc
