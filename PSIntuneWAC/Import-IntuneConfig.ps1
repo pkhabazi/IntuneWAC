@@ -153,7 +153,6 @@ function Import-IntuneConfig {
         }
         ## End of Device Compliance upload
 
-
         ## Begin of Scripts upload to intune graph
         Write-Verbose "Uploading scripts to Intune.."
         if ($deviceScript.count -ge 1) {
