@@ -1,4 +1,4 @@
-function Compare-ObjectProperties {
+function Compare-Policy {
     <#
     .SYNOPSIS
         coming soon
@@ -9,56 +9,43 @@ function Compare-ObjectProperties {
     .PARAMETER DifferenceTemplate
     Coming soon
     .EXAMPLE
-    Compare-ObjectProperties -ReferenceTemplate .\template.json -DifferenceTemplate .\template2.jos
+    Compare-Policy -ReferenceTemplate $ref -DifferenceTemplate $diff
 
     .NOTES
-    NAME: Compare-ObjectProperties
+    NAME: Compare-Policy
     #>
 
     [CmdletBinding()]
     param (
-        # Parameter help description
+        # Reference value is the Online available
         [Parameter(Mandatory)]
-        [string]$ReferenceTemplate,
+        [psobject]$ReferenceTemplate,
 
-        # Parameter help description
+        # Difference  template is the template that will be uploaded
         [Parameter(Mandatory)]
-        [string]$DifferenceTemplate
+        [psobject]$DifferenceTemplate
     )
 
     process {
-
-        try {
-            $DifferenceObject = (Get-Content $DifferenceTemplate | ConvertFrom-Json)
-        }
-        catch {
-            Write-Error $_ -ErrorAction Stop
-        }
-
-        try {
-            $ReferenceObject = (Get-Content $ReferenceTemplate | ConvertFrom-Json)
-        }
-        catch {
-            Write-Error $_
-        }
-
-        $objprops = $ReferenceObject | Get-Member -MemberType Property, NoteProperty | % Name
-        $objprops += $DifferenceObject | Get-Member -MemberType Property, NoteProperty | % Name
-        $objprops = $objprops | Sort | Select -Unique
+        $objprops = $ReferenceTemplate | Get-Member -MemberType Property, NoteProperty | ForEach-Object Name
+        $objprops += $DifferenceTemplate | Get-Member -MemberType Property, NoteProperty | ForEach-Object Name
+        $objprops = $objprops | Sort-Object | Select-Object -Unique
 
         $diffs = @()
 
         foreach ($objprop in $objprops) {
-            $diff = Compare-Object $ReferenceObject $DifferenceObject -Property $objprop
+            $diff = Compare-Object $ReferenceTemplate $DifferenceTemplate -Property $objprop
             if ($diff) {
                 $diffprops = @{
                     PropertyName = $objprop
-                    RefValue     = ($diff | ? { $_.SideIndicator -eq '<=' } | % $($objprop))
-                    DiffValue    = ($diff | ? { $_.SideIndicator -eq '=>' } | % $($objprop))
+                    RefValue     = ($diff | Where-Object { $_.SideIndicator -eq '<=' } | ForEach-Object $($objprop))
+                    DiffValue    = ($diff | Where-Object { $_.SideIndicator -eq '=>' } | ForEach-Object $($objprop))
                 }
                 $diffs += New-Object PSObject -Property $diffprops
             }
         }
-        if ($diffs) { return ($diffs | Select PropertyName, RefValue, DiffValue) }
+        if ($diffs) {
+            return ($diffs | Select-Object PropertyName, RefValue, DiffValue)
+        }
     }
 }

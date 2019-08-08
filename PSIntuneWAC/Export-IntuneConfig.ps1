@@ -11,10 +11,10 @@ function Export-IntuneConfig {
     .Parameter authToken
     coming soon
     .EXAMPLE
-    Export-IntuneConfig -ConfType All -authToken $token -FilePath "C:\sources\pkm-intune\demo" -Verbose
+    Export-IntuneConfig -ConfType All -AuthToken $token -FilePath "C:\sources\pkm-intune\demo" -Verbose
     Export Current configuration to spicified folder
     .EXAMPLE
-    Export-IntuneConfig -ConfType All -authToken $token -FilePath "C:\sources\pkm-intune\demo"
+    Export-IntuneConfig -ConfType All -AuthToken $token -FilePath "C:\sources\pkm-intune\demo"
     Export Current configuration with verbose support
     .NOTES
     NAME: Export-IntuneConfig
