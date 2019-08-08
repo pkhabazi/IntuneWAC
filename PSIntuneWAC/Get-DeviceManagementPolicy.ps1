@@ -9,7 +9,7 @@ function Get-DeviceManagementPolicy {
     .PARAMETER ManagementType
         Coming soon
     .EXAMPLE
-    Get-DeviceManagementPolicy -AuthToken -ManagementType
+    Get-DeviceManagementPolicy -AuthToken $token -ManagementType Configuration
     .NOTES
     NAME: Get-DeviceManagementPolicy
     #>
@@ -27,30 +27,33 @@ function Get-DeviceManagementPolicy {
     )
 
     begin {
-        precheckAuthToken -authtoken $AuthToken
+        #precheckAuthToken -authtoken $AuthToken
     }
 
     process {
         switch ($ManagementType) {
             "Configuration" {
                 $graphEndpoint = "deviceManagement/deviceConfigurations"
+                $graphApiVersion = "Beta"
                 break
             }
             "Compliance" {
                 $graphEndpoint = "deviceManagement/deviceCompliancePolicies"
+                $graphApiVersion = "Beta"
                 break
             }
             "Script" {
                 $graphEndpoint = "deviceManagement/deviceManagementScripts"
+                $graphApiVersion = "Beta"
                 break
             }
         }
 
-        $graphApiVersion = "Beta"
-        Write-Verbose "Resource: $graphEndpoint"
+        Write-Verbose "Connecting to resource: $graphEndpoint"
+
         $uri = "https://graph.microsoft.com/$graphApiVersion/$($graphEndpoint)"
 
-        Write-Verbose "Connicting to uri: $($uri)"
+        Write-Verbose "Connecting to uri: $($uri)"
 
         try {
             if ($managementType -eq "Script") {
