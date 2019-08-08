@@ -115,7 +115,7 @@ function Import-IntuneConfig {
 
                 if (Test-Json $tmpJson) {
                     Write-Verbose "Valid Json content in $($item.FullName)"
-                    [psobject]$ReferenceTemplate = Get-DeviceManagementPolicy -AuthToken $token -ManagementType Configuration | Where-Object { $_.displayName -eq ((Get-Content $item.FullName | ConvertFrom-Json | Select-Object displayName).displayName) } | Select-Object * -ExcludeProperty id, lastModifiedDateTime, roleScopeTagIds, supportsScopeTags, createdDateTime, version, value
+                    [psobject]$ReferenceTemplate = Get-DeviceManagementPolicy -AuthToken $token -ManagementType Compliance | Where-Object { $_.displayName -eq ((Get-Content $item.FullName | ConvertFrom-Json | Select-Object displayName).displayName) } | Select-Object * -ExcludeProperty id, lastModifiedDateTime, roleScopeTagIds, supportsScopeTags, createdDateTime, version, value
 
                     if ($ReferenceTemplate) {
                         Write-Output "Compliance profile with name $($ReferenceTemplate.displayName) already exists, comparing to find difference"
@@ -125,7 +125,7 @@ function Import-IntuneConfig {
                             Write-Output ($comparePolicy | Format-Table | Out-String)
 
                             if ($PSCmdlet.ShouldProcess("Do you want to update profile: $($ReferenceTemplate.displayName)")) {
-                                $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Configuration
+                                $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Compliance
                             }
                             else {
                                 Write-Output "No change have been made, deployment aborted"
@@ -134,7 +134,7 @@ function Import-IntuneConfig {
                     }
                     else {
                         Write-Verbose "Compliance profile doesn't exists online"
-                        $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Configuration
+                        $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Compliance
                     }
 
                     if ($azDevOps) {
