@@ -66,7 +66,8 @@ Give an example
 ## Find us
 
 * [GitHub](https://github.com/pkhabazi/intune)
-* [Blog](https://pkm-technology.com)
+* [Blog PKM](https://pkm-technology.com)
+* [Blog TalkingWorkplace](https://talkingworkplace.com)
 
 ## Contributing
 
