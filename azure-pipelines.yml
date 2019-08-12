@@ -1,0 +1,27 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- master
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  steps:
+  - powershell: Install-Module -Name Pester -Force -SkipPublisherCheck -AllowClobber -Scope CurrentUser
+    displayName: Install prerequisite modules
+  - powershell: |
+      $pesterResult = Invoke-Pester -Script .\Tests\Test-ModuleFunction.Tests.ps1 -OutputFormat NUnitXml -OutputFile .\TEST-Results.xml -PassThru
+      if ($pesterResult.FailedCount -gt 0) {
+        Write-Error -Message 'One or more tests failed!'
+      }
+    displayName: Run Pester CI
+  - task: PublishTestResults@2
+    inputs:
+      testRunner: nUnit
+      testResultsFiles: 'TEST-Results.xml'
+    condition: always()
+    displayName: Publish test results
