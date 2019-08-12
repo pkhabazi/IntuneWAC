@@ -11,7 +11,7 @@ function Push-DeviceManagementPolicy {
     .PARAMETER AuthToken
         Coming soon
     .EXAMPLE
-    Push-DeviceManagementPolicy -Json -ManagementType Compliance
+    Push-DeviceManagementPolicy -Json -ManagementType Compliance -AuthToken $AuthToken
     Authenticates you with the Graph API interface
     .NOTES
     NAME: Push-DeviceManagementPolicy
