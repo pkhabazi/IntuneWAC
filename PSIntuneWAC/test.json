@@ -1,0 +1,32 @@
+{
+  "users": {
+    "allUsers": 1,
+    "included": {
+      "groupIds": [],
+      "userIds": []
+    },
+    "excluded": {
+      "groupIds": [],
+      "userIds": []
+    }
+  },
+  "usersV2": {
+    "allUsers": 1,
+    "included": {
+      "allGuestUsers": false,
+      "roles": false,
+      "usersGroups": false,
+      "roleIds": [],
+      "groupIds": [],
+      "userIds": []
+    },
+    "excluded": {
+      "allGuestUsers": false,
+      "roles": false,
+      "usersGroups": false,
+      "roleIds": [],
+      "groupIds": [],
+      "userIds": []
+    }
+  }
+}
