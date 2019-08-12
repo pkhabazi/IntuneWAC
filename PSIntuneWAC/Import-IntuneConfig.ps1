@@ -16,10 +16,10 @@ function Import-IntuneConfig {
         some info
 
     .Example
-    Import-IntuneConfig -azDevOps $false -SourceFilePath .\output -AuthToken $token
+    Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\companyName -AuthToken $token
 
     .Example
-    Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\CondicioCloud\ -AuthToken $token -verbose
+    Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\companyName -AuthToken $token -verbose
     #>
 
     [cmdletbinding(SupportsShouldProcess, ConfirmImpact = 'High')]
@@ -54,7 +54,7 @@ function Import-IntuneConfig {
             $groups = Get-ChildItem $groupsPath -ErrorAction SilentlyContinue
         }
         catch {
-            Write-Verbose $_
+            Write-Verbose $_.Exception.Message
             Write-Error "Unable to get JSON files" -ErrorAction Stop
         }
         ## end of try
@@ -182,26 +182,24 @@ function Import-IntuneConfig {
             foreach ($item in $groups) {
                 $tmpJson = $null
                 $tmpJson = Get-Content $item.FullName -Raw
-                #if (Test-Json $tmpJson) {
-                $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType groups
-                $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Compliance_$($item.Name -replace '.json','').yaml" -Encoding ascii -Force
+                if (Test-Json $tmpJson) {
+                    $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType groups
+                    $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Compliance_$($item.Name -replace '.json','').yaml" -Encoding ascii -Force
 
-                if ($azDevOps) {
-                    $compLog = "$env:temp\Compliance_$($x.Name -replace '.json','').yaml"
-                    Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Device Compliance Policy - $($x.Name -replace '.json','');]$compLog"
-                }
-                <#
+                    if ($azDevOps) {
+                        $compLog = "$env:temp\Compliance_$($x.Name -replace '.json','').yaml"
+                        Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Device Compliance Policy - $($x.Name -replace '.json','');]$compLog"
+                    }
                 }
                 else {
                     Write-Error "JSON test filed for $($item.FullName)"
                 }
-                #>
+
             }
         }
         else {
             Write-Verbose "No Grous profiles found in $($groupsPath) for upload"
         }
         ## End of Scripts upload
-
     }
 }

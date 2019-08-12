@@ -27,7 +27,11 @@ function Get-DeviceManagementPolicy {
     )
 
     begin {
-        #precheckAuthToken -authtoken $AuthToken
+        $precheckAuthToken = precheckAuthToken -Authtoken $AuthToken
+        if ($precheckAuthToken) {
+            Write-Verbose "Token renewd"
+            $AuthToken = $precheckAuthToken
+        }
     }
 
     process {

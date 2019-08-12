@@ -33,10 +33,6 @@ function Export-IntuneConfig {
         [Hashtable]$AuthToken
     )
 
-    begin {
-        precheckAuthToken -authtoken $AuthToken
-    }
-
     process {
 
         if ($FilePath) { $FilePath = $FilePath.TrimEnd('\') } else { $FilePath = $PSScriptRoot } # what to do with else, set default path of trow error?

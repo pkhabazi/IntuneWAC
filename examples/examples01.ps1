@@ -4,3 +4,6 @@ $clientSecret = 'emH.yXnv/Z-EhRe[PnmAjLBxBs53dS31'
 
 $token = Get-AuthToken -clientId $clientId -clientSecret $clientSecret -tenantId $tenantId -Authtype Application
 $token = Get-AuthToken -userName "pouyan.graph@condiciocloud.onmicrosoft.com" -password "Ehk58HV^3ab@lsp3" -tenantId $tenantId -Authtype User -Verbose
+
+
+Import-Module .\PSIntuneWAC -Force
