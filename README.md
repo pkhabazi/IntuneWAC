@@ -1,3 +1,7 @@
+# Build Status
+
+[![Build Status](https://dev.azure.com/pkm-technology/IntuneWAC/_apis/build/status/pkhabazi.intune?branchName=master)](https://dev.azure.com/pkm-technology/IntuneWAC/_build/latest?definitionId=52&branchName=master)
+
 # Microsoft Intune
 
 Microsoft Intune is a cloud-based service in the enterprise mobility management (EMM) space that helps enable your workforce to be productive while keeping your corporate data protected. Similar to other Azure services, Microsoft Intune is available in the Azure portal. With Intune, you can:
