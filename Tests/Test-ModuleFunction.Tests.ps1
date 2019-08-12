@@ -6,7 +6,7 @@ FROM: https://raw.githubusercontent.com/DuPSUG/DuPSUG15/master/PesterVsSloppines
 using namespace System.Management.Automation
 using namespace System.Management.Automation.Language
 param (
-    [String]$ModuleName = '*',
+    [String]$ModuleName = 'PSIntuneWAC',
     [String]$FunctionName = '*'
 )
 
