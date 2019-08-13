@@ -49,7 +49,10 @@ List the different parameters available
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
+For testing the functionality of this module we use Pester tests, we break down the test in two types:
+
+1. Type one is used to test the coding style of the module
+2. Type two is specific tests created to test the functions that are available in this module
 
 ### Break down into end to end tests
 
@@ -61,17 +64,15 @@ Give an example
 
 ### And coding style tests
 
-Explain what these tests test and why
+For PowerShell Module Functions tests we use the following Pester test
 
-```
-Give an example
+```PowerShell
+Invoke-Pester .\Tests\Test-ModuleFunction.Tests.ps1
 ```
 
 ## Find us
 
 * [GitHub](https://github.com/pkhabazi/intune)
-* [Blog PKM](https://pkm-technology.com)
-* [Blog TalkingWorkplace](https://talkingworkplace.com)
 
 ## Contributing
 
@@ -83,8 +84,8 @@ We use [SemVer](http://semver.org/) for versioning. For the versions available, 
 
 ## Authors
 
-* **Pouyan Khabazi** - *Initial work* - [GitHub](https://github.com/pkhabazi)
-* **Frans Oudendorp** - *Initial work* - [GitHub](https://github.com/foudendorp)
+* **Pouyan Khabazi** - *Initial work* - [GitHub](https://github.com/pkhabazi) [Blog](https://pkm-technology.com)
+* **Frans Oudendorp** - *Initial work* - [GitHub](https://github.com/foudendorp) [Blog](https://talkingworkplace.com)
 
 See also the list of [contributors](https://github.com/pkhabazi/intune/contributors) who participated in this project.
 
@@ -94,6 +95,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## Acknowledgments
 
-* This PS module is based on initial code and ideas of [Ben Reader](https://github.com/tabs-not-spaces)
+* This PS module is inspired by work presented by [Ben Reader](https://github.com/tabs-not-spaces) at PSConfEU!
 * Hat tip to anyone whose code was used
 * Inspiration
