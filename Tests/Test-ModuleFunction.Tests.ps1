@@ -111,6 +111,7 @@ foreach ($file in Get-ChildItem -Path "$PSScriptRoot\..\$ModuleName\$ModuleName.
             }
 
             # Test the parameters defined in the function, parameters from subfunctions are not evaluated.
+            <#
             $functionParameters = (
                 $functions | Where-Object { $_.Name -eq $testedFunctionName }
             ).Body.FindAll(
@@ -122,6 +123,7 @@ foreach ($file in Get-ChildItem -Path "$PSScriptRoot\..\$ModuleName\$ModuleName.
                 },
                 $false
             )
+            #>
 
             $parameterNames = foreach ($parameter in $functionParameters) {
                 ($parameterName = $parameter.Name.VariablePath.UserPath)
