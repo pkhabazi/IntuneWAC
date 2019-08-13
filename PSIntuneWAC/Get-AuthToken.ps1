@@ -1,4 +1,4 @@
-function Get-authToken {
+function Get-AuthToken {
     <#
     .SYNOPSIS
     This function is used to authenticate with the Graph API REST interface
@@ -20,10 +20,10 @@ function Get-authToken {
     coming
 
     .EXAMPLE
-    Get-authToken -clientId $clientId -clientSecret $clientSecret -tenantId $tenantId -Authtype Application
+    Get-authToken -clientId "clientId" -clientSecret "clientSecret" -tenantId "tenantID" -Authtype Application
     Authenticates you with the Graph API interface
     .EXAMPLE
-    Get-authToken -userName "pouyan.graph@condiciocloud.onmicrosoft.com" -password "Ehk58HV^3ab@lsp3" -tenantId $tenantId -Authtype User -Verbose
+    Get-authToken -userName "UserName" -password "Password" -tenantId "tenantID" -Authtype User -Verbose
     Authenticates you with the Graph API interface
     .NOTES
     NAME: Get-authToken
@@ -53,7 +53,7 @@ function Get-authToken {
 
         # Parameter help description
         [Parameter(mandatory = $false)]
-        [string]$Refresh,
+        [string]$RefreshToken,
 
         # Parameter help description
         [Parameter(Mandatory = $true)]
@@ -79,6 +79,7 @@ function Get-authToken {
         }
 
         if ($ClientId -eq '') {
+            # Use default MS Intune Graph Client ID
             $ClientId = "d1ddf0e4-d672-4dae-b554-9d5bdfd93547"
             Write-Verbose "Using default Client ID: $($ClientId)"
         }
@@ -90,15 +91,13 @@ function Get-authToken {
         if ($AuthType -eq 'User') {
             Write-Verbose "Loging in with Userame and Password"
 
-            if ($Refresh) {
+            if ($RefreshToken) {
                 $body = @{
                     resource      = $resourceUri
                     client_id     = $ClientId
                     grant_type    = "refresh_token"
-                    username      = $UserName
                     scope         = "openid"
-                    password      = $Password
-                    refresh_token = $Refresh
+                    refresh_token = $RefreshToken
                 }
             }
             else {
@@ -126,8 +125,12 @@ function Get-authToken {
                     $authToken = @{
                         'Content-Type'  = 'application/json'
                         'Authorization' = "Bearer " + $response.Access_Token
-                        'ExpiresOn'     = $response.expires_in
+                        'ExpiresOn'     = ([timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddSeconds($response.expires_on)))
+                        'ClientId'      = $ClientId
+                        'refresh_token' = $response.refresh_token
+                        'TenantId'      = $TenantId
                     }
+                    Write-Verbose $authToken
                     return $authToken
                 }
                 else {

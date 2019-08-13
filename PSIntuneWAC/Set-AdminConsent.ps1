@@ -20,9 +20,6 @@ function Set-AdminConsent {
         [string]$User
     )
 
-    begin {
-    }
-
     process {
         $userUpn = New-Object "System.Net.Mail.MailAddress" -ArgumentList $User
         $tenant = $userUpn.Host

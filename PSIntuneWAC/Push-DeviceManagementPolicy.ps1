@@ -11,7 +11,7 @@ function Push-DeviceManagementPolicy {
     .PARAMETER AuthToken
         Coming soon
     .EXAMPLE
-    Push-DeviceManagementPolicy -Json -ManagementType Compliance -AuthToken $AuthToken
+    Push-DeviceManagementPolicy -Json -ManagementType Compliance -AuthToken $token
     Authenticates you with the Graph API interface
     .NOTES
     NAME: Push-DeviceManagementPolicy
@@ -32,7 +32,11 @@ function Push-DeviceManagementPolicy {
     )
 
     begin {
-        precheckAuthToken -authtoken $AuthToken
+        $precheckAuthToken = precheckAuthToken -Authtoken $AuthToken
+        if ($precheckAuthToken) {
+            Write-Verbose "Token renewd"
+            $AuthToken = $precheckAuthToken
+        }
     }
 
     process {

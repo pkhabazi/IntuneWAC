@@ -7,7 +7,7 @@ function Get-ObjectMember {
     .PARAMETER Obj
         Coming soon
     .EXAMPLE
-    Get-ObjectMembers -Obj
+    Get-ObjectMembers -Obj $object
     .NOTES
     NAME: Get-ObjectMembers
     #>

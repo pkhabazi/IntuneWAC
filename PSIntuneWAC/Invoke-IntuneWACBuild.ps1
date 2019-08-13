@@ -28,16 +28,13 @@ function Invoke-IntuneWACBuild {
         [string]$TemplatePath
     )
 
-    begin {
-    }
-
     process {
 
         try {
             $object = (Get-Content $ConfigFile | ConvertFrom-Json)
         }
         catch {
-            Write-Verbose $_
+            Write-Verbose $_.Exception.Message
             Write-Error "Unable to read Configuration from $($ConfigFile)" -ErrorAction Stop
         }
 
@@ -58,7 +55,7 @@ function Invoke-IntuneWACBuild {
                 Write-Verbose $result
             }
             catch {
-                Write-Verbose $_
+                Write-Verbose $_.Exception.Message
                 Write-Error "Unable to create folder $($OutputPath)" -ErrorAction Stop
             }
         }
@@ -75,7 +72,7 @@ function Invoke-IntuneWACBuild {
                     Write-Verbose $result
                 }
                 catch {
-                    Write-Verbose $_
+                    Write-Verbose $_.Exception.Message
                     Write-Error "Unable to create folder $($outputhPatFull)" -ErrorAction Stop
                 }
             }
@@ -92,14 +89,14 @@ function Invoke-IntuneWACBuild {
                         $templateFile = Get-Content -Raw $templateFilePath | ConvertFrom-Json
                     }
                     catch {
-                        Write-Verbose $_
+                        Write-Verbose $_.Exception.Message
                         Write-Error "Unable to read json from $($templateFilePath)"
                     }
 
                     $objMembers = $item.Value | Get-ObjectMember
 
                     foreach ($obj in $objMembers) {
-                        Write-Verbose  "name is : $($obj.key) en value is $($obj.Value)"
+                        Write-Verbose "name is : $($obj.key) en value is $($obj.Value)"
                         $templateFile.$($obj.Key) = $obj.Value
                     }
 
@@ -107,7 +104,7 @@ function Invoke-IntuneWACBuild {
                         $templateFile | ConvertTo-Json | Out-File "$outputPathFull\$($item.Key).json" -Force
                     }
                     catch {
-                        Write-Verbose $_
+                        Write-Verbose $_.Exception.Message
                         Write-Error "Unable To save output"
                     }
                 }
@@ -134,7 +131,7 @@ function Invoke-IntuneWACBuild {
                     Write-Verbose $result
                 }
                 catch {
-                    Write-Verbose $_
+                    Write-Verbose $_.Exception.Message
                     Write-Error "Unable to create folder $($outputhPatFull)" -ErrorAction Stop
                 }
             }
@@ -151,7 +148,7 @@ function Invoke-IntuneWACBuild {
                         $templateFile = Get-Content -Raw $templateFilePath | ConvertFrom-Json
                     }
                     catch {
-                        Write-Verbose $_
+                        Write-Verbose $_.Exception.Message
                         Write-Error "Unable to read json from $($templateFilePath)"
                     }
 
@@ -166,7 +163,7 @@ function Invoke-IntuneWACBuild {
                         $templateFile | ConvertTo-Json | Out-File "$outputPathFull\$($item.Key).json" -Force
                     }
                     catch {
-                        Write-Verbose $_
+                        Write-Verbose $_.Exception.Message
                         Write-Error "Unable To save output"
                     }
                 }
@@ -193,7 +190,7 @@ function Invoke-IntuneWACBuild {
                     Write-Verbose $result
                 }
                 catch {
-                    Write-Verbose $_
+                    Write-Verbose $_.Exception.Message
                     Write-Error "Unable to create folder $($outputhPatFull)" -ErrorAction Stop
                 }
             }
@@ -217,7 +214,7 @@ function Invoke-IntuneWACBuild {
                     Write-Verbose $result
                 }
                 catch {
-                    Write-Verbose $_
+                    Write-Verbose $_.Exception.Message
                     Write-Error "Unable to create folder $($outputhPatFull)" -ErrorAction Stop
                 }
             }
@@ -240,13 +237,13 @@ function Invoke-IntuneWACBuild {
                     $dynamicGroup | ConvertTo-Json | Out-File "$outputPathFull\$($item.displayName).json" -Force
                 }
                 catch {
-                    Write-Verbose $_
+                    Write-Verbose $_.Exception.Message
                     Write-Error "Unable To save output"
                 }
             }
         }
         else {
-            Write-Verbose "no groups in Config file $ConfigFile"
+            Write-Verbose "No groups found in Config file: $ConfigFile"
         }
         ## Endof groups
     }
