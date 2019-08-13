@@ -38,7 +38,7 @@ These instructions will get you a copy of the project up and running on your loc
 A step by step Guid how to install module
 
 ```PowerShell
-Install-Module .\PSIntuneWAC -Force
+Install-Module .\IntuneWAC -Force
 ```
 
 ### Usage
