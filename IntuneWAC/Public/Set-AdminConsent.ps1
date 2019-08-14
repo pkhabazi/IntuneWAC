@@ -7,17 +7,18 @@ function Set-AdminConsent {
     .PARAMETER User
         COMING SOON
     .EXAMPLE
-    Get-AuthToken
+    Set-AdminConsent -User
     Authenticates you with the Graph API interface
     .NOTES
-    NAME: Get-AuthToken
+    NAME: Set-AdminConsent
     #>
 
-    [cmdletbinding()]
+    [cmdletbinding(SupportsShouldProcess, ConfirmImpact = 'High')]
     [OutputType([System.Collections.Hashtable])]
     param (
         [Parameter(Mandatory)]
         [string]$User
+
     )
 
     process {
@@ -63,30 +64,36 @@ function Set-AdminConsent {
         $resourceAppIdURI = "https://graph.microsoft.com"
         $authority = "https://login.microsoftonline.com/$tenant"
 
-        try {
-            $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
-            # https://msdn.microsoft.com/en-us/library/azure/microsoft.identitymodel.clients.activedirectory.promptbehavior.aspx
-            # Change the prompt behaviour to force credentials each time: Auto, Always, Never, RefreshSession
-            $platformParameters = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.PlatformParameters" -ArgumentList "Auto"
-            $userId = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.UserIdentifier" -ArgumentList ($User, "OptionalDisplayableId")
-            $authResult = $authContext.AcquireTokenAsync($resourceAppIdURI, $clientId, $redirectUri, $platformParameters, $userId, "prompt=admin_consent").Result
+        if ($PSCmdlet.ShouldProcess("Do you want to set Consent")) {
 
-            if ($authResult.AccessToken) {
-                # Creating header for Authorization token
-                $authHeader = @{
-                    'Content-Type'  = 'application/json'
-                    'Authorization' = "Bearer " + $authResult.AccessToken
-                    'ExpiresOn'     = $authResult.ExpiresOn
+            try {
+                $authContext = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.AuthenticationContext" -ArgumentList $authority
+                # https://msdn.microsoft.com/en-us/library/azure/microsoft.identitymodel.clients.activedirectory.promptbehavior.aspx
+                # Change the prompt behaviour to force credentials each time: Auto, Always, Never, RefreshSession
+                $platformParameters = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.PlatformParameters" -ArgumentList "Auto"
+                $userId = New-Object "Microsoft.IdentityModel.Clients.ActiveDirectory.UserIdentifier" -ArgumentList ($User, "OptionalDisplayableId")
+                $authResult = $authContext.AcquireTokenAsync($resourceAppIdURI, $clientId, $redirectUri, $platformParameters, $userId, "prompt=admin_consent").Result
+
+                if ($authResult.AccessToken) {
+                    # Creating header for Authorization token
+                    $authHeader = @{
+                        'Content-Type'  = 'application/json'
+                        'Authorization' = "Bearer " + $authResult.AccessToken
+                        'ExpiresOn'     = $authResult.ExpiresOn
+                    }
+                    return $authHeader
                 }
-                return $authHeader
+                else {
+                    Write-Error "Authorization Access Token is null, please re-run authentication..." -ErrorAction Stop
+                }
             }
-            else {
-                Write-Error "Authorization Access Token is null, please re-run authentication..." -ErrorAction Stop
+            catch {
+                Write-Error $_.Exception.Message
+                Write-Error $_.Exception.ItemName -ErrorAction Stop
             }
         }
-        catch {
-            Write-Error $_.Exception.Message
-            Write-Error $_.Exception.ItemName -ErrorAction Stop
+        else {
+            Write-Output "No change have been made, deployment aborted"
         }
     }
 }

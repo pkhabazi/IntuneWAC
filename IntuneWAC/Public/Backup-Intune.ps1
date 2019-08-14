@@ -8,7 +8,7 @@ function Backup-Intune {
      coming
 
     .EXAMPLE
-    Get-authToken -clientId $clientId -clientSecret $clientSecret -tenantId $tenantId -Authtype Application
+    Backup-Intune -Param $true
     Authenticates you with the Graph API interface
 
     .NOTES

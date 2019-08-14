@@ -27,8 +27,10 @@ function Compare-Policy {
     )
 
     process {
+        # Get Property names
         $objprops = $ReferenceTemplate | Get-Member -MemberType Property, NoteProperty | ForEach-Object Name
         $objprops += $DifferenceTemplate | Get-Member -MemberType Property, NoteProperty | ForEach-Object Name
+        # Combine Property names to one overview
         $objprops = $objprops | Sort-Object | Select-Object -Unique
 
         $diffs = @()

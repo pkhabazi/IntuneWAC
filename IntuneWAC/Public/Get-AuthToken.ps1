@@ -18,6 +18,8 @@ function Get-AuthToken {
     coming
     .PARAMETER Authtype
     coming
+    .PARAMETER RefreshToken
+    coming
 
     .EXAMPLE
     Get-authToken -clientId "clientId" -clientSecret "clientSecret" -tenantId "tenantID" -Authtype Application
@@ -37,7 +39,7 @@ function Get-AuthToken {
 
         # Parameter help description
         [Parameter(mandatory = $false)]
-        [string]$Password,
+        [securestring]$Password,
 
         # Parameter help description
         [Parameter(mandatory = $false)]

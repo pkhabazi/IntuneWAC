@@ -6,8 +6,13 @@ function New-CustomIntuneApplication {
     .description
     coming soon
 
+    .parameter UserName
+    coming
+    .parameter ApplicationName
+    coming
+
     .EXAMPLE
-    coming soon
+    New-CustomIntuneApplication -UserName -ApplicationName
 
     #>
     [cmdletbinding(SupportsShouldProcess=$true)]
