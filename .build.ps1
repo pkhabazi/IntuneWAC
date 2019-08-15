@@ -65,7 +65,7 @@ Process {
     Run_Unit_Tests,
     Upload_Unit_Test_Results_To_AppVeyor,
     Fail_Build_if_Unit_Test_Failed,
-    #Fail_if_Last_Code_Converage_is_Under_Threshold, # need to restore this
+    Fail_if_Last_Code_Converage_is_Under_Threshold, # need to restore this
     IntegrationTests,
     Deploy_with_PSDeploy
 

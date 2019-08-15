@@ -5,36 +5,37 @@
         [io.DirectoryInfo]$SourceFolder,
 
         [PSCustomObject]
-        $DscResourceMetadata = (Get-Content -Raw "$((Resolve-Path $SourceFolder).Path)\DscResources\DSCResourcesDefinitions.json" | ConvertFrom-Json)
+        $DscResourceMetadata = (Get-Content -Raw "$((Resolve-Path $SourceFolder).Path)\DscResources\DSCResourcesDefinitions.json"| ConvertFrom-Json)
     )
 
     if (![io.path]::IsPathRooted($SourceFolder)) {
-        $SourceFolder = (Resolve-Path $SourceFolder).Path
+        $SourceFolder =  (Resolve-Path $SourceFolder).Path
     }
-    foreach ($Resource in $DscResourceMetadata) {
+    foreach ($Resource in $DscResourceMetadata)
+    {
         $DscProperties = @()
         $ResourceName = $Resource.psobject.Properties.Name
         Write-Verbose "Preparing $ResourceName"
         foreach ($DscProperty in $Resource.($ResourceName)) {
-            $resourceParams = @{ }
+            $resourceParams = @{}
             $DscProperty.psobject.properties | % { $resourceParams[$_.Name] = $_.value }
             $DscProperties += New-xDscResourceProperty @resourceParams
         }
-
+        
         if (Test-Path "$SourceFolder\DscResources\$ResourceName") {
             $DscResourceParams = @{
-                Property     = $DscProperties
+                Property     = $DscProperties 
                 Path         = "$SourceFolder\DscResources\$ResourceName"
-                FriendlyName = $ResourceName
+                FriendlyName = $ResourceName 
             }
             Update-xDscResource @DscResourceParams -Force
         }
         else {
             $DscResourceParams = @{
-                Name         = $ResourceName
-                Property     = $DscProperties
+                Name         = $ResourceName 
+                Property     = $DscProperties 
                 Path         = "$SourceFolder\"
-                FriendlyName = $ResourceName
+                FriendlyName = $ResourceName 
             }
             New-xDscResource @DscResourceParams
         }

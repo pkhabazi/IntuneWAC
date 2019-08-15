@@ -7,7 +7,7 @@ Param (
     $ProjectName = (property ProjectName (Split-Path -Leaf (Join-Path $PSScriptRoot '../..')) ),
 
     [string]
-    $LineSeparation = (property LineSeparation ('-' * 78))
+    $LineSeparation = (property LineSeparation ('-' * 78)) 
 )
 
 task UpdateDscResource {
@@ -17,7 +17,7 @@ task UpdateDscResource {
     . $PSScriptRoot\Update-DscResourceFromDefinition.ps1
 
     $SourceFolder = Join-Path -Path $ProjectPath.FullName -ChildPath $ProjectName
-
+    
     if (Test-Path $SourceFolder) {
         Update-DscResourceFromObjectMetadata -SourceFolder $SourceFolder
     }

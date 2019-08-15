@@ -9,9 +9,9 @@ Param (
     $PesterOutputFormat = (property PesterOutputFormat 'NUnitXml'),
 
     [string]
-    $APPVEYOR_JOB_ID = $(try { property APPVEYOR_JOB_ID } catch { }),
+    $APPVEYOR_JOB_ID = $(try {property APPVEYOR_JOB_ID} catch {}),
 
-    $DeploymentTags = $(try { property DeploymentTags } catch { }),
+    $DeploymentTags = $(try {property DeploymentTags} catch {}),
 
     $DeployConfig = (property DeployConfig 'Deploy.PSDeploy.ps1')
 )
@@ -23,19 +23,19 @@ task Deploy_with_PSDeploy {
         $BuildOutput = Join-Path -Path $BuildRoot -ChildPath $BuildOutput
     }
 
-    $DeployFile = [io.path]::Combine($BuildRoot, $DeployConfig)
-
+    $DeployFile =  [io.path]::Combine($BuildRoot, $DeployConfig)
+    
     "Deploying Module based on $DeployConfig config"
-
+    
     $InvokePSDeployArgs = @{
-        Path  = $DeployFile
-        Force = $true
+        Path    = $DeployFile
+        Force   = $true
     }
 
-    if ($DeploymentTags) {
-        $null = $InvokePSDeployArgs.Add('Tags', $DeploymentTags)
+    if($DeploymentTags) {
+        $null = $InvokePSDeployArgs.Add('Tags',$DeploymentTags)
     }
-
+    
     Import-Module PSDeploy
     Invoke-PSDeploy @InvokePSDeployArgs
 }
