@@ -1,0 +1,25 @@
+{
+    "@odata.type":  "#microsoft.graph.iosCompliancePolicy",
+    "description":  "Device Compliance Policy for iOS.",
+    "displayName":  "DCO-IOS",
+    "passcodeBlockSimple":  true,
+    "passcodeExpirationDays":  180,
+    "passcodeMinimumLength":  4,
+    "passcodeMinutesOfInactivityBeforeLock":  5,
+    "passcodeMinutesOfInactivityBeforeScreenTimeout":  null,
+    "passcodePreviousPasscodeBlockCount":  5,
+    "passcodeMinimumCharacterSetCount":  null,
+    "passcodeRequiredType":  "deviceDefault",
+    "passcodeRequired":  true,
+    "osMinimumVersion":  "8.0",
+    "osMaximumVersion":  null,
+    "osMinimumBuildVersion":  null,
+    "osMaximumBuildVersion":  null,
+    "securityBlockJailbrokenDevices":  true,
+    "deviceThreatProtectionEnabled":  false,
+    "deviceThreatProtectionRequiredSecurityLevel":  "unavailable",
+    "managedEmailProfileRequired":  false,
+    "restrictedApps":  [
+
+                       ]
+}

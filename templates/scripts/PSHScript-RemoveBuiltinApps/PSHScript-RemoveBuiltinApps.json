@@ -1,9 +1,0 @@
-{
-    "@odata.context":  "https://graph.microsoft.com/Beta/$metadata#deviceManagement/deviceManagementScripts/$entity",
-    "displayName":  "PSHScript-RemoveBuiltinApps",
-    "description":  "",
-    "runAsAccount":  "system",
-    "enforceSignatureCheck":  false,
-    "fileName":  "Invoke-RemoveBuiltinApps.ps1",
-    "runAs32Bit":  true
-}
