@@ -15,5 +15,5 @@
     psdeploy = 'latest'
 
     #required for DSC authoring
-    xDscResourceDesigner = 'latest'
+    #xDscResourceDesigner = 'latest'
 }
