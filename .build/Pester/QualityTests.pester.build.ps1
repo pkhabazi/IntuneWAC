@@ -2,6 +2,8 @@ Param (
     [string]
     $BuildOutput = (property BuildOutput 'BuildOutput'),
 
+    [string] $ProjectName = (property ProjectName (Split-Path -Leaf $BuildRoot)),
+
     [string]
     $PesterOutputFormat = (property PesterOutputFormat 'NUnitXml'),
 
@@ -55,7 +57,7 @@ task Quality_Tests {
 
     Push-Location $QualityTestPath
 
-    Import-module Pester -ErrorAction Stop
+    #Import-module Pester -ErrorAction Stop
     $script:QualityTestResults = Invoke-Pester -ErrorAction Stop -OutputFormat NUnitXml -OutputFile $TestResultFile -PassThru
     $null = $script:QualityTestResults | Export-Clixml -Path $PesterOutFilePath -Force
     Pop-Location
