@@ -17,9 +17,14 @@ steps:
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
+    script: 'Install-Module -Name Pester,BuildHelpers -Force -SkipPublisherCheck -AllowClobber -Scope CurrentUser'
+- task: PowerShell@2
+  inputs:
+    targetType: 'inline'
     script: '.\.build.ps1 -ResolveDependency'
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'NUnit'
-    testResultsFiles: '.\BuildOutput\testResults\unit\NUnitXml\Unit_PSv6.2_*.xml'
+    testResultsFiles: 'Unit_PSv6.2_*.xml'
+    searchFolder: '$(System.DefaultWorkingDirectory)/BuildOutput/testResults/unit/NUnitXml'
   condition: always()
