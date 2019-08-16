@@ -4,7 +4,7 @@
 # https://aka.ms/yaml
 
 trigger:
-- master
+- redesignStructure
 
 pool:
   vmImage: 'ubuntu-latest'

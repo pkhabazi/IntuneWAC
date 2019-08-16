@@ -1,16 +1,16 @@
 @{
     # Set up a mini virtual environment...
-    PSDependOptions = @{
-        AddToPath = $True
-        Target = 'BuildOutput\modules'
+    PSDependOptions  = @{
+        AddToPath  = $True
+        Target     = 'BuildOutput\modules'
         Parameters = @{
         }
     }
 
-    buildhelpers = 'latest'
-    invokeBuild = 'latest'
-    pester = 'latest'
+    BuildHelpers     = 'latest'
+    InvokeBuild      = 'latest'
+    Pester           = 'latest'
     PSScriptAnalyzer = 'latest'
-    PlatyPS = 'latest'
-    psdeploy = 'latest'
+    PlatyPS          = 'latest'
+    psdeploy         = 'latest'
 }
