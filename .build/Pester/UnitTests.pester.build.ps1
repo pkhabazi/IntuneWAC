@@ -54,7 +54,7 @@ task Run_Unit_Tests {
     "`tUnitTest Path: $UnitTestPath"
     ''
 
-    #Import-module Pester -ErrorAction Stop
+    Import-module Pester -ErrorAction Stop
     if (![io.path]::IsPathRooted($BuildOutput)) {
         $BuildOutput = Join-Path -Path $BuildRoot -ChildPath $BuildOutput
     }
