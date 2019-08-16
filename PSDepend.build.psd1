@@ -12,5 +12,5 @@
     Pester           = 'latest'
     PSScriptAnalyzer = 'latest'
     PlatyPS          = 'latest'
-    psdeploy         = 'latest'
+    PSDeploy         = 'latest'
 }
