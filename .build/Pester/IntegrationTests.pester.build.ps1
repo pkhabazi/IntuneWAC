@@ -11,16 +11,15 @@ task IntegrationTests {
     "`tProject Path = $BuildRoot"
     "`tProject Name = $ProjectName"
     "`tIntegration Tests   = $RelativePathToIntegrationTests"
-    $IntegrationTestPath = [io.DirectoryInfo][system.io.path]::Combine($BuildRoot,$ProjectName,$RelativePathToIntegrationTests)
-     "`tIntegration Tests  = $IntegrationTestPath"
+    $IntegrationTestPath = [io.DirectoryInfo][system.io.path]::Combine($BuildRoot, $ProjectName, $RelativePathToIntegrationTests)
+    "`tIntegration Tests  = $IntegrationTestPath"
 
     if (!$IntegrationTestPath.Exists -and
         (   #Try a module structure where the
-            ($IntegrationTestPath = [io.DirectoryInfo][system.io.path]::Combine($BuildRoot,$RelativePathToIntegrationTests)) -and
+            ($IntegrationTestPath = [io.DirectoryInfo][system.io.path]::Combine($BuildRoot, $RelativePathToIntegrationTests)) -and
             !$IntegrationTestPath.Exists
         )
-    )
-    {
+    ) {
         Write-Warning ("`t>> Integration tests Path Not found {0}" -f $IntegrationTestPath)
     }
     else {
@@ -28,10 +27,9 @@ task IntegrationTests {
         ''
         Push-Location $IntegrationTestPath
 
-        #Import-module Pester -ErrorAction Stop
+        Import-module Pester -ErrorAction Stop
         Invoke-Pester -ErrorAction Stop
 
         Pop-Location
     }
-
 }

@@ -2,7 +2,7 @@ Param (
     [string]
     $BuildOutput = (property BuildOutput 'BuildOutput'),
 
-    [string] $ProjectName = (property ProjectName (Split-Path -Leaf $BuildRoot)),
+    #[string] $ProjectName = (property ProjectName (Split-Path -Leaf $BuildRoot)),
 
     [string]
     $PesterOutputFormat = (property PesterOutputFormat 'NUnitXml'),
@@ -47,17 +47,17 @@ task Quality_Tests {
 
     if (!(Test-Path $PesterOutParentFolder)) {
         Write-Verbose "CREATING Pester Results Output Folder $PesterOutParentFolder"
-        $null = mkdir $PesterOutParentFolder -Force
+        $null = New-Item $PesterOutParentFolder -ItemType Directory -Force
     }
 
     if (!(Test-Path $TestResultFileParentFolder)) {
         Write-Verbose "CREATING Test Results Output Folder $TestResultFileParentFolder"
-        $null = mkdir $TestResultFileParentFolder -Force
+        $null = New-Item $TestResultFileParentFolder -ItemType Directory -Force
     }
 
     Push-Location $QualityTestPath
 
-    #Import-module Pester -ErrorAction Stop
+    Import-module Pester -ErrorAction Stop
     $script:QualityTestResults = Invoke-Pester -ErrorAction Stop -OutputFormat NUnitXml -OutputFile $TestResultFile -PassThru
     $null = $script:QualityTestResults | Export-Clixml -Path $PesterOutFilePath -Force
     Pop-Location

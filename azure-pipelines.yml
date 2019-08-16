@@ -7,17 +7,13 @@ trigger:
 - redesignStructure
 
 pool:
-  vmImage: 'ubuntu-latest'
+  vmImage: 'win1803'
 
 pr:
 - master
 - releases/*
 
 steps:
-- task: PowerShell@2
-  inputs:
-    targetType: 'inline'
-    script: 'Install-Module -Name Pester, PSScriptAnalyzer, PSDeploy,BuildHelpers -Force -SkipPublisherCheck -AllowClobber -Scope CurrentUser'
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
