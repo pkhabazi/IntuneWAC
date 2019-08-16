@@ -17,26 +17,13 @@ steps:
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
-    script: 'Install-Module -Name Pester, PSScriptAnalyzer -Force -SkipPublisherCheck -AllowClobber -Scope CurrentUser'
+    script: 'Install-Module -Name Pester, PSScriptAnalyzer, PSDeploy -Force -SkipPublisherCheck -AllowClobber -Scope CurrentUser'
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
-    script: |
-      $pesterResult = Invoke-Pester -Script .\Tests\Test-ModuleFunction.Tests.ps1 -OutputFormat NUnitXml -OutputFile .\Test-ModuleFunction-Results.xml -PassThru
-            if ($pesterResult.FailedCount -gt 0) {
-              Write-Error -Message 'One or more tests failed!'
-            }
-      $pesterResult = Invoke-Pester -Script .\Tests\Test-ModuleManifest.Tests.ps1 -OutputFormat NUnitXml -OutputFile .\Test-ModuleManifest-Results.xml -PassThru
-            if ($pesterResult.FailedCount -gt 0) {
-              Write-Error -Message 'One or more tests failed!'
-            }
+    script: '.\.build.ps1 -ResolveDependency'
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'NUnit'
-    testResultsFiles: 'Test-ModuleFunction-Results.xml'
-  condition: always()
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: 'NUnit'
-    testResultsFiles: 'Test-ModuleManifest-Results.xml'
+    testResultsFiles: '.\BuildOutput\testResults\unit\NUnitXml\*'
   condition: always()
