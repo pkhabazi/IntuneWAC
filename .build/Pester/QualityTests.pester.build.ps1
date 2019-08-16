@@ -2,7 +2,9 @@ Param (
     [string]
     $BuildOutput = (property BuildOutput 'BuildOutput'),
 
-    [string] $ProjectName = (property ProjectName (Split-Path -Leaf $BuildRoot)),
+    [string]
+    #$ProjectName = (property ProjectName (Split-Path -Leaf $BuildRoot)),
+    $ProjectName = "IntuneWac",
 
     [string]
     $PesterOutputFormat = (property PesterOutputFormat 'NUnitXml'),
