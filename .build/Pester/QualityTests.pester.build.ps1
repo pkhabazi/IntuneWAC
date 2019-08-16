@@ -2,7 +2,7 @@ Param (
     [string]
     $BuildOutput = (property BuildOutput 'BuildOutput'),
 
-    #[string] $ProjectName = (property ProjectName (Split-Path -Leaf $BuildRoot)),
+    [string] $ProjectName = (property ProjectName (Split-Path -Leaf $BuildRoot)),
 
     [string]
     $PesterOutputFormat = (property PesterOutputFormat 'NUnitXml'),
@@ -24,7 +24,7 @@ task Quality_Tests {
 
     if (!$QualityTestPath.Exists -and
         (   #Try a module structure where the
-            ($QualityTestPath = [io.DirectoryInfo][system.io.path]::Combine($ProjectPath, $ProjectName, $RelativePathToQualityTests)) -and
+            ($QualityTestPath = [io.DirectoryInfo][system.io.path]::Combine($ProjectPath, $RelativePathToQualityTests)) -and
             !$QualityTestPath.Exists
         )
     ) {
