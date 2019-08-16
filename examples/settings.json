@@ -1,70 +1,61 @@
 {
-    "generalSettings":
-        {
+    "generalSettings": {
         "customerName": "CondicioCloud",
         "outputPath": "",
         "tenantDomain": "condiciocloud.onmicrosoft.com"
-        },
+    },
     "configurationPolicies": {
-        "DC-WIN-DR": [
-            {
-                "authenticationPreferredAzureADTenantDomainName":  "pkm.cloud",
-                "personalizationDesktopImageUrl": "https://condicio.nl/condicio.png",
-                "personalizationLockScreenImageUrl": "https://condicio.nl/condicio.png",
-                "defenderFilesAndFoldersToExclude":  [
-                    "%windir%\\softwaredistribution\\datastore",
-                    "%windir%\\softwaredistribution\\datastore\\logs",
-                    "%windir%\\security\\database",
-                    "%ALLUSERSPROFILE%\\Microsoft\\Windows\\Hyper-V",
-                    "%windir%\\containers"
-                ],
-                "defenderFileExtensionsToExclude":  [
-                   "Edb*.jrs",
-                   "Ebd.chk",
-                   "Tmp.edb",
-                   "OfficeClickToRun.exe",
-                   "ost",
-                   "pst"
-               ],
-               "defenderProcessesToExclude":  [
+        "DC-WIN-DR": {
+            "authenticationPreferredAzureADTenantDomainName": "pkm.cloud",
+            "personalizationDesktopImageUrl": "https://condicio.nl/condicio.png",
+            "personalizationLockScreenImageUrl": "https://condicio.nl/condicio.png",
+            "defenderFilesAndFoldersToExclude": [
+                "%windir%\\softwaredistribution\\datastore",
+                "%windir%\\softwaredistribution\\datastore\\logs",
+                "%windir%\\security\\database",
+                "%ALLUSERSPROFILE%\\Microsoft\\Windows\\Hyper-V",
+                "%windir%\\containers"
+            ],
+            "defenderFileExtensionsToExclude": [
+                "Edb*.jrs",
+                "Ebd.chk",
+                "Tmp.edb",
+                "OfficeClickToRun.exe",
+                "ost",
+                "pst"
+            ],
+            "defenderProcessesToExclude": [
                 "%windir%\\Program Files\\printix.net\\Printix Client\\PrintixClient.exe"
-                ],
-                "edgeHomepageUrls":  [
+            ],
+            "edgeHomepageUrls": [
                 "https://condicio.nl"
-                ]
-            }
-        ],
-        "DC-WIN-EP": [
-            {
-                "localSecurityOptionsLogOnMessageTitle":  null,
-                "localSecurityOptionsLogOnMessageText":  null
-            }
-        ]
+            ]
+        },
+        "DC-WIN-EP": {
+            "localSecurityOptionsLogOnMessageTitle": null,
+            "localSecurityOptionsLogOnMessageText": null
+        }
     },
     "compliancePolicies": {
-        "DCO-WIN": [
-            {
-                "description":  "Device Compliance Policy for Windows 10.",
-                "displayName":  "DCO-WIN2",
-                "passwordRequired":  true,
-                "passwordBlockSimple":  true,
-                "passwordMinutesOfInactivityBeforeLock":  5,
-                "passwordExpirationDays":  180,
-                "passwordMinimumLength":  6
-            }
-        ],
-        "DCO-AND": [
-            {
-                "description":  "Device Compliance Policy for Android.",
-                "displayName":  "DCO-AND",
-                "passwordRequired":  true,
-                "passwordMinimumLength":  4,
-                "passwordMinutesOfInactivityBeforeLock":  4,
-                "passwordExpirationDays":  170,
-                "passwordPreviousPasswordBlockCount":  3,
-                "osMinimumVersion":  "4.4"
-            }
-        ]
+        "DCO-WIN": {
+            "description": "Device Compliance Policy for Windows 10.",
+            "displayName": "DCO-WIN2",
+            "passwordRequired": true,
+            "passwordBlockSimple": true,
+            "passwordMinutesOfInactivityBeforeLock": 5,
+            "passwordExpirationDays": 180,
+            "passwordMinimumLength": 6
+        },
+        "DCO-AND": {
+            "description": "Device Compliance Policy for Android.",
+            "displayName": "DCO-AND",
+            "passwordRequired": true,
+            "passwordMinimumLength": 4,
+            "passwordMinutesOfInactivityBeforeLock": 4,
+            "passwordExpirationDays": 170,
+            "passwordPreviousPasswordBlockCount": 3,
+            "osMinimumVersion": "4.4"
+        }
     },
     "scripts": {
         "Script01": ""

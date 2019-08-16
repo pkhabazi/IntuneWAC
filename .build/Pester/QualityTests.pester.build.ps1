@@ -22,7 +22,7 @@ task Quality_Tests {
     "`tQuality Tests   = $RelativePathToQualityTests"
 
     $QualityTestPath = [io.DirectoryInfo][system.io.path]::Combine($ProjectPath,$ProjectName,$RelativePathToQualityTests)
-    
+
     if (!$QualityTestPath.Exists -and
         (   #Try a module structure where the
             ($QualityTestPath = [io.DirectoryInfo][system.io.path]::Combine($ProjectPath,$RelativePathToQualityTests)) -and
@@ -38,7 +38,7 @@ task Quality_Tests {
     if (![io.path]::IsPathRooted($BuildOutput)) {
         $BuildOutput = Join-Path -Path $ProjectPath.FullName -ChildPath $BuildOutput
     }
-    
+
     $PSVersion = 'PSv{0}.{1}' -f $PSVersionTable.PSVersion.Major, $PSVersionTable.PSVersion.Minor
     $Timestamp = Get-date -uformat "%Y%m%d-%H%M%S"
     $TestResultFileName = "QA_$PSVersion`_$TimeStamp.xml"
@@ -46,7 +46,7 @@ task Quality_Tests {
     $TestResultFileParentFolder = Split-Path $TestResultFile -Parent
     $PesterOutFilePath = [system.io.path]::Combine($BuildOutput,'testResults','QA',$PesterOutputSubFolder,$TestResultFileName)
     $PesterOutParentFolder = Split-Path $PesterOutFilePath -Parent
-    
+
     if (!(Test-Path $PesterOutParentFolder)) {
         Write-Verbose "CREATING Pester Results Output Folder $PesterOutParentFolder"
         $null = mkdir $PesterOutParentFolder -Force
@@ -58,8 +58,8 @@ task Quality_Tests {
     }
 
     Push-Location $QualityTestPath
-    
-    Import-module Pester -ErrorAction Stop
+
+    #Import-module Pester -ErrorAction Stop
     $script:QualityTestResults = Invoke-Pester -ErrorAction Stop -OutputFormat NUnitXml -OutputFile $TestResultFile -PassThru
     $null = $script:QualityTestResults | Export-Clixml -Path $PesterOutFilePath -Force
     Pop-Location

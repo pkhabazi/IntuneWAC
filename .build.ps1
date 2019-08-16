@@ -32,7 +32,7 @@ Param (
         ''
     }
 
-    , $CodeCoverageThreshold = 80
+    , $CodeCoverageThreshold = 0 # aanpassen
 )
 
 Process {

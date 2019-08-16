@@ -35,11 +35,11 @@ task Run_Unit_Tests {
         "`tTesting against Source Code: $BuildOutput\$BuildRoot"
     }
 
-    #Resolving the Unit Tests path based on 2 possible Path: 
+    #Resolving the Unit Tests path based on 2 possible Path:
     #    BuildRoot\ProjectName\tests\Unit (my way, I like to ship tests with Modules)
     # or BuildRoot\tests\Unit (Warren's way: http://ramblingcookiemonster.github.io/Building-A-PowerShell-Module/)
     $UnitTestPath = [io.DirectoryInfo][system.io.path]::Combine($BuildRoot,$ProjectName,$PathToUnitTests)
-    
+
     if (!$UnitTestPath.Exists -and
         (   #Try a module structure where the tests are outside of the Source directory
             ($UnitTestPath = [io.DirectoryInfo][system.io.path]::Combine($BuildRoot,$PathToUnitTests)) -and
@@ -54,7 +54,7 @@ task Run_Unit_Tests {
     "`tUnitTest Path: $UnitTestPath"
     ''
 
-    Import-module Pester -ErrorAction Stop
+    #Import-module Pester -ErrorAction Stop
     if (![io.path]::IsPathRooted($BuildOutput)) {
         $BuildOutput = Join-Path -Path $BuildRoot -ChildPath $BuildOutput
     }
@@ -66,7 +66,7 @@ task Run_Unit_Tests {
     $TestResultFileParentFolder = Split-Path $TestResultFile -Parent
     $PesterOutFilePath = [system.io.path]::Combine($BuildOutput,'testResults','unit',$PesterOutputSubFolder,$TestResultFileName)
     $PesterOutParentFolder = Split-Path $PesterOutFilePath -Parent
-    
+
     if (!(Test-Path $PesterOutParentFolder)) {
         Write-Verbose "CREATING Pester Results Output Folder $PesterOutParentFolder"
         $null = mkdir $PesterOutParentFolder -Force
@@ -76,18 +76,18 @@ task Run_Unit_Tests {
         Write-Verbose "CREATING Test Results Output Folder $TestResultFileParentFolder"
         $null = mkdir $TestResultFileParentFolder -Force
     }
-    
+
     Push-Location $UnitTestPath
     if($TestFromBuildOutput) {
         $ListOfTestedFile = Get-ChildItem -Recurse "$BuildOutput\$ProjectName" -include *.ps1,*.psm1 -Exclude *.tests.ps1
     }
     else {
-        $ListOfTestedFile = Get-ChildItem | Foreach-Object { 
+        $ListOfTestedFile = Get-ChildItem | Foreach-Object {
             $fileName = $_.BaseName -replace '\.tests'
             "$BuildRoot\$ProjectName\*\$fileName.ps1"
         }
     }
-    
+
     $ListOfTestedFile | ForEach-Object { Write-Verbose $_}
     "Number of tested files: $($ListOfTestedFile.Count)"
     $PesterParams = @{
@@ -97,7 +97,7 @@ task Run_Unit_Tests {
         CodeCoverage = $ListOfTestedFile
         PassThru     = $true
     }
-    Import-module Pester -ErrorAction Stop
+    #Import-module Pester -ErrorAction Stop
     if($TestFromBuildOutput) {
         Import-Module -Force ("$BuildOutput\$ProjectName" -replace '\\$')
     }

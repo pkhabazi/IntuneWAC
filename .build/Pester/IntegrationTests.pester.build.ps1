@@ -28,10 +28,10 @@ task IntegrationTests {
         ''
         Push-Location $IntegrationTestPath
 
-        Import-module Pester -ErrorAction Stop
+        #Import-module Pester -ErrorAction Stop
         Invoke-Pester -ErrorAction Stop
 
         Pop-Location
     }
-   
+
 }

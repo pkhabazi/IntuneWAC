@@ -11,10 +11,11 @@ function Invoke-IntuneWACBuild {
     .Parameter templatePath
         Path to the JSON template files that will be used
     .Example
-        Invoke-IntuneWACBuild -configFile .\examples\settings.json -templatePath .\templates -outputPath .\output -verbose
+        Invoke-IntuneWACBuild -configFile .\examples\settings.json -templatePath .\examples\templates -OutputPath .\output -verbose
     .Example
-        Invoke-IntuneWACBuild -configFile .\settings.json
+        Invoke-IntuneWACBuild -ConfigFile ".\examples\settings.json" -templatePath ".\examples\templates" -OutputPath ".\output"
     #>
+
 
     [cmdletbinding()]
     param (
@@ -221,15 +222,15 @@ function Invoke-IntuneWACBuild {
 
             foreach ($item in $object.groups) {
                 $dynamicGroup = @{
-                    description= $item.description
-                    displayName= $item.displayName
-                    groupTypes = @(
+                    description                   = $item.description
+                    displayName                   = $item.displayName
+                    groupTypes                    = @(
                         'DynamicMembership'
                     )
-                    mailEnabled= $false
-                    mailNickname = $item.displayName
-                    securityEnabled = $true
-                    membershipRule= $item.membershipRule
+                    mailEnabled                   = $false
+                    mailNickname                  = $item.displayName
+                    securityEnabled               = $true
+                    membershipRule                = $item.membershipRule
                     membershipRuleProcessingState = 'on'
                 }
 
