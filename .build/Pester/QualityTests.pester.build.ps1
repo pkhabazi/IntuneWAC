@@ -3,9 +3,6 @@ Param (
     $BuildOutput = (property BuildOutput 'BuildOutput'),
 
     [string]
-    $ProjectName = (property ProjectName 'ProjectName'),
-
-    [string]
     $PesterOutputFormat = (property PesterOutputFormat 'NUnitXml'),
 
     [string]
