@@ -3,7 +3,7 @@ Param (
     $BuildOutput = (property BuildOutput 'BuildOutput'),
 
     [string]
-    $ProjectName = (property ProjectName (Split-Path -Leaf $BuildRoot)),
+    $ProjectName = (property ProjectName 'ProjectName'),
 
     [string]
     $PesterOutputFormat = (property PesterOutputFormat 'NUnitXml'),
@@ -21,15 +21,14 @@ task Quality_Tests {
     "`tProject Name = $ProjectName"
     "`tQuality Tests   = $RelativePathToQualityTests"
 
-    $QualityTestPath = [io.DirectoryInfo][system.io.path]::Combine($ProjectPath,$ProjectName,$RelativePathToQualityTests)
+    $QualityTestPath = [io.DirectoryInfo][system.io.path]::Combine($ProjectPath, $ProjectName, $RelativePathToQualityTests)
 
     if (!$QualityTestPath.Exists -and
         (   #Try a module structure where the
-            ($QualityTestPath = [io.DirectoryInfo][system.io.path]::Combine($ProjectPath,$RelativePathToQualityTests)) -and
+            ($QualityTestPath = [io.DirectoryInfo][system.io.path]::Combine($ProjectPath, $RelativePathToQualityTests)) -and
             !$QualityTestPath.Exists
         )
-    )
-    {
+    ) {
         Write-Warning ('Cannot Execute Quality tests, Path Not found {0}' -f $QualityTestPath)
         return
     }
@@ -42,9 +41,9 @@ task Quality_Tests {
     $PSVersion = 'PSv{0}.{1}' -f $PSVersionTable.PSVersion.Major, $PSVersionTable.PSVersion.Minor
     $Timestamp = Get-date -uformat "%Y%m%d-%H%M%S"
     $TestResultFileName = "QA_$PSVersion`_$TimeStamp.xml"
-    $TestResultFile = [system.io.path]::Combine($BuildOutput,'testResults','QA',$PesterOutputFormat,$TestResultFileName)
+    $TestResultFile = [system.io.path]::Combine($BuildOutput, 'testResults', 'QA', $PesterOutputFormat, $TestResultFileName)
     $TestResultFileParentFolder = Split-Path $TestResultFile -Parent
-    $PesterOutFilePath = [system.io.path]::Combine($BuildOutput,'testResults','QA',$PesterOutputSubFolder,$TestResultFileName)
+    $PesterOutFilePath = [system.io.path]::Combine($BuildOutput, 'testResults', 'QA', $PesterOutputSubFolder, $TestResultFileName)
     $PesterOutParentFolder = Split-Path $PesterOutFilePath -Parent
 
     if (!(Test-Path $PesterOutParentFolder)) {
@@ -59,7 +58,7 @@ task Quality_Tests {
 
     Push-Location $QualityTestPath
 
-    #Import-module Pester -ErrorAction Stop
+    Import-module Pester -ErrorAction Stop
     $script:QualityTestResults = Invoke-Pester -ErrorAction Stop -OutputFormat NUnitXml -OutputFile $TestResultFile -PassThru
     $null = $script:QualityTestResults | Export-Clixml -Path $PesterOutFilePath -Force
     Pop-Location
@@ -72,4 +71,4 @@ task Fail_Build_if_Quality_Tests_failed -If ($CodeCoverageThreshold -ne 0) {
 }
 
 # Synopsis: Meta task that runs Quality Tests, and fails if they're not successful
-task Pester_Quality_Tests_Stop_On_Fail Quality_Tests,Fail_Build_if_Quality_Tests_failed
+task Pester_Quality_Tests_Stop_On_Fail Quality_Tests, Fail_Build_if_Quality_Tests_failed
