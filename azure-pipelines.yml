@@ -7,7 +7,7 @@ trigger:
 - redesignStructure
 
 pool:
-  vmImage: 'win1803'
+  vmImage: 'ubuntu-latest'
 
 pr:
 - master
