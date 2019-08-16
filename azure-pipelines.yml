@@ -25,12 +25,6 @@ steps:
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'NUnit'
-    testResultsFiles: '**/Unit_PSv6.2_*.xml'
-    searchFolder: '$(System.DefaultWorkingDirectory)/BuildOutput/testResults/unit'
-  condition: always()
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: 'NUnit'
-    testResultsFiles: 'QA_PSv6.2_*.xml'
-    searchFolder: '$(System.DefaultWorkingDirectory)/BuildOutput/testResults/QA'
+    testResultsFiles: '**/**/*_PSv6.2_*.xml'
+    searchFolder: '$(System.DefaultWorkingDirectory)/BuildOutput/testResults'
   condition: always()
