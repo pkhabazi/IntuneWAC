@@ -10,14 +10,4 @@ InModuleScope $moduleName {
         Authorization = "Bearer eyJ0eXAiOiJKV1QiLCJub25jZSI6ImpsX3ZZMkFzcVl3X28xdHBKRnVXTDhpTDkyeF9nNFhnalV5cGh5VVBzTFEiLCJhbGciOiJSUzI1NiIsIng1dCI6ImllX3FXQ1hoWHh0MXpJRXN1NGM3YWNRVkd…"
         Content       = "application / json"
     }
-
-    Describe 'Remove-Cache' {
-        It 'Removes cached results from temp\cache.text' {
-            Mock -CommandName Remove-Item -MockWith { }
-
-            Remove-Cache
-
-            Assert-MockCalled -CommandName Remove-Item -Times 1 -Exactly
-        }
-    }
 }
