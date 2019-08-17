@@ -1,21 +1,37 @@
 // For format details, see https://aka.ms/vscode-remote/devcontainer.json or the definition README at
-// https://github.com/microsoft/vscode-dev-containers/tree/master/containers/azure-functions-dotnetcore-latest
+// https://github.com/microsoft/vscode-dev-containers/tree/master/containers/powershell
 {
-	"name": "Azure Functions & C# (.NET Core Latest)",
-	"dockerFile": "Dockerfile",
-	"appPort": 7071,
+  "name": "PowerShell",
+  "dockerFile": "Dockerfile",
+  // Uncomment the next line if you want to publish any ports.
+  // "appPort": [],
+  // Uncomment the next line if you want to add in default container specific settings.json values
+  // "settings":  { "workbench.colorTheme": "Quiet Light" },
+  // Uncomment the next line to run commands after the container is created. This gets run in bash which is why we call `pwsh`.
+  // "postCreateCommand": "pwsh -c '$PSVersionTable'",
+  // Uncomment the next line to use a non-root user. See https://aka.ms/vscode-remote/containers/non-root-user.
+  // "runArgs": [ "-u", "1000" ],
+  "extensions": [
+    "ms-vscode.powershell",
+    "rebornix.project-snippets",
+    "msazurermtools.azurerm-vscode-tools",
+    "donjayamanne.git-extension-pack",
+    "ms-vsts.team",
+    "vscode-icons-team.vscode-icons",
+    "docsmsft.docs-markdown",
+    "yzhang.markdown-all-in-one",
+    "DavidAnson.vscode-markdownlint",
+    "streetsidesoftware.code-spell-checker",
+    "streetsidesoftware.code-spell-checker-dutch",
+    "shardulm94.trailing-spaces",
+  ],
 
-	// Uncomment the next line if you want to add in default container specific settings.json values
-	// "settings":  { "workbench.colorTheme": "Quiet Light" },
-
-	// Uncomment the next line to run commands after the container is created.
-	// "postCreateCommand": "dotnet restore",
-
-	// Uncomment the next line to use a non-root user. See https://aka.ms/vscode-remote/containers/non-root-user.
-	// "runArgs": [ "-u", "1000" ],
-
-	"extensions": [
-		"ms-azuretools.vscode-azurefunctions",
-		"ms-vscode.csharp"
-	]
+  // Mount your .ssh folder to /root/.ssh-localhost so we can copy its contents
+  "runArgs": [
+    "-v",
+    "${env:HOME}${env:USERPROFILE}/.ssh:/root/.ssh-localhost:ro"
+  ],
+  
+  // Copy the contents to the correct location and set permissions
+  "postCreateCommand": "mkdir -p ~/.ssh && cp -r ~/.ssh-localhost/* ~/.ssh && chmod 700 ~/.ssh && chmod 600 ~/.ssh/*"
 }

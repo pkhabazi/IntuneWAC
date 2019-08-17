@@ -39,7 +39,7 @@ function Get-AuthToken {
 
         # Parameter help description
         [Parameter(mandatory = $false)]
-        [string]$Password,
+        [securestring]$Password,
 
         # Parameter help description
         [Parameter(mandatory = $false)]

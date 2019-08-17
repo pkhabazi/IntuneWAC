@@ -32,7 +32,7 @@ Task UpdateHelp{
     }
     $HelpFolder = [io.Path]::Combine($ProjectPath,$SourceFolder,$HelpFolder)
 
-    import-module -Force ([io.DirectoryInfo][io.Path]::Combine($ProjectPath,$SourceFolder,"$ProjectName.psd1")).ToString()
+    Import-Module -Force ([io.DirectoryInfo][io.Path]::Combine($ProjectPath,$SourceFolder,"$ProjectName.psd1")).ToString()
     Update-MarkdownHelpModule -Path $HelpFolder
 }
 
