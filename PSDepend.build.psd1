@@ -13,4 +13,5 @@
     PSScriptAnalyzer = 'latest'
     PlatyPS          = 'latest'
     PSDeploy         = 'latest'
+    PSDepend         = 'latest'
 }
