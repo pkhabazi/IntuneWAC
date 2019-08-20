@@ -17,7 +17,7 @@ steps:
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
-    script: 'Install-Module -Name Pester,BuildHelpers,PSDeploy -Force -SkipPublisherCheck -AllowClobber -Scope CurrentUser'
+    script: 'Install-Module -Name Pester,BuildHelpers,PSDeploy,PSScriptAnalyzer -Force -SkipPublisherCheck -AllowClobber -Scope CurrentUser'
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
