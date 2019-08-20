@@ -38,14 +38,17 @@ These instructions will get you a copy of the project up and running on your loc
 A step by step Guid how to install module
 
 ```PowerShell
-Install-Module .\IntuneWAC -Force
+Install-Module .\IntuneWAC -Force -SkipPublisherCheck
 ```
+
 
 ### Usage
 
-#### Parameters
+For examples on how to use this module see [link](https://github.com/pkhabazi/intune/tree/master/examples)
 
-List the different parameters available
+## Functions
+
+For a list of the functions and docs see [link](https://github.com/pkhabazi/intune/tree/master/docs)
 
 ## Running the tests
 
