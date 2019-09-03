@@ -9,5 +9,5 @@ LABEL "repository"="https://github.com/pkhabazi/GithubActions"
 LABEL "homepage"="https://pkm-technology.com"
 LABEL "maintainer"="Pouyan Khabazi"
 
-ADD entrypoint.ps1 /entrypoint.ps1
+ADD ../../entrypoint.ps1 /entrypoint.ps1
 ENTRYPOINT ["pwsh", "/entrypoint.ps1 -ResolveDependency"]
