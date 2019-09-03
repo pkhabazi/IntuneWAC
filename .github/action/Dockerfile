@@ -5,7 +5,7 @@ LABEL "com.github.actions.description"="Write arguments to the standard output"
 LABEL "com.github.actions.icon"="terminal"
 LABEL "com.github.actions.color"="blue"
 
-LABEL "repository"="https://github.com/pkhabazi/GithubActions"
+LABEL "repository"="https://github.com/pkhabazi/IntuneWAC"
 LABEL "homepage"="https://pkm-technology.com"
 LABEL "maintainer"="Pouyan Khabazi"
 
