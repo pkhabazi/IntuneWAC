@@ -57,6 +57,9 @@
             "osMinimumVersion": "4.4"
         }
     },
+    "DeviceEnrollmentConfiguration": {
+
+    },
     "scripts": {
         "Script01": ""
     },

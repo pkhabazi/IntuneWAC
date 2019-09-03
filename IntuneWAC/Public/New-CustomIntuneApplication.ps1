@@ -15,7 +15,7 @@ function New-CustomIntuneApplication {
     New-CustomIntuneApplication -UserName -ApplicationName
 
     #>
-    [cmdletbinding(SupportsShouldProcess=$true)]
+    [cmdletbinding(SupportsShouldProcess = $true)]
     param (
         # Parameter help description
         [Parameter(mandatory = $true)]
@@ -34,5 +34,4 @@ function New-CustomIntuneApplication {
         Write-Output "$UserName and $ApplicationName"
         New-Item $UserName -WhatIf
     }
-
 }

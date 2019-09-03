@@ -2,7 +2,7 @@
   // Wortkbench settings
   "workbench.activityBar.visible": true,
   //"workbench.iconTheme": "vs-seti",
-  "window.zoomLevel": 0,
+  "window.zoomLevel": 1,
 
   // Extensions
   "gitlens.advanced.messages": {

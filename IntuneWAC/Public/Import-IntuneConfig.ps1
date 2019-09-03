@@ -19,7 +19,7 @@ function Import-IntuneConfig {
     Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\companyName -AuthToken $token
 
     .Example
-    Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\companyName -AuthToken $token -verbose
+    Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\CondicioCloud -AuthToken $token -verbose
     #>
 
     [cmdletbinding(SupportsShouldProcess, ConfirmImpact = 'High')]
