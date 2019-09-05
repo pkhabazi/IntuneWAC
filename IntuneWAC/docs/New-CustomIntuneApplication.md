@@ -24,13 +24,13 @@ coming soon
 
 ### EXAMPLE 1
 ```
-coming soon
+New-CustomIntuneApplication -UserName -ApplicationName
 ```
 
 ## PARAMETERS
 
 ### -UserName
-Parameter help description
+coming
 
 ```yaml
 Type: String
@@ -45,7 +45,7 @@ Accept wildcard characters: False
 ```
 
 ### -ApplicationName
-Parameter help description
+coming
 
 ```yaml
 Type: String

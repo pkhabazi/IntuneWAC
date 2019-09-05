@@ -8,13 +8,11 @@ function Export-IntuneConfig {
     specify the path where you want to export the configuration to
     .Parameter ConfType
     specify which type of config type you want to export: 'Configuration', 'Compliance', 'Script', 'All'
-    .Parameter authToken
-    coming soon
     .EXAMPLE
-    Export-IntuneConfig -ConfType All -AuthToken $token -FilePath "C:\sources\pkm-intune\demo" -Verbose
+    Export-IntuneConfig -ConfType Configuration -FilePath "C:\sources\pkm-intune\demo" -Verbose
     Export Current configuration to spicified folder
     .EXAMPLE
-    Export-IntuneConfig -ConfType All -AuthToken $token -FilePath "C:\sources\pkm-intune\demo"
+    Export-IntuneConfig -ConfType All -FilePath "C:\sources\pkm-intune\demo"
     Export Current configuration with verbose support
     .NOTES
     NAME: Export-IntuneConfig
@@ -27,11 +25,12 @@ function Export-IntuneConfig {
 
         [Parameter(Mandatory)]
         [ValidateSet('Configuration', 'Compliance', 'Script', 'All')]
-        [string]$ConfType,
-
-        [Parameter(Mandatory)]
-        [Hashtable]$AuthToken
+        [string]$ConfType
     )
+
+    begin {
+        precheckAuthToken
+    }
 
     process {
 
@@ -71,7 +70,7 @@ function Export-IntuneConfig {
                 }
             }
 
-            $deviceConfiguration = Get-DeviceManagementPolicy -AuthToken $AuthToken -managementType Configuration -Verbose | Select-Object * -ExcludeProperty value
+            $deviceConfiguration = Get-DeviceManagementPolicy -ManagementType Configuration -Verbose | Select-Object * -ExcludeProperty value
             foreach ($d in $deviceConfiguration) {
                 $d | Select-Object * -ExcludeProperty id, lastModifiedDateTime, roleScopeTagIds, supportsScopeTags, createdDateTime, version | ConvertTo-Json -Depth 100 | Out-File -FilePath "$configPath\$($d.displayName)`.json" -Encoding ascii -Force
             }
@@ -96,7 +95,7 @@ function Export-IntuneConfig {
                 }
             }
 
-            $deviceCompliance = Get-DeviceManagementPolicy -AuthToken $AuthToken -managementType Compliance | Select-Object * -ExcludeProperty value
+            $deviceCompliance = Get-DeviceManagementPolicy -ManagementType Compliance | Select-Object * -ExcludeProperty value
             foreach ($d in $deviceCompliance) {
                 $d | Select-Object * -ExcludeProperty id, lastModifiedDateTime, roleScopeTagIds, supportsScopeTags, createdDateTime, version | ConvertTo-Json -Depth 100 | Out-File -FilePath "$compPath\$($d.displayName)`.json" -Encoding ascii -Force
             }
@@ -121,7 +120,7 @@ function Export-IntuneConfig {
                 }
             }
 
-            $scripts = Get-DeviceManagementPolicy -AuthToken $AuthToken -managementType Script | Select-Object * -ExcludeProperty value
+            $scripts = Get-DeviceManagementPolicy -ManagementType Script | Select-Object * -ExcludeProperty value
             foreach ($d in $scripts) {
                 $tmpJson = $d | select-object '@odata.context', displayName, description, runAsAccount, enforceSignatureCheck, fileName, runAs32Bit;
                 New-Item "$scriptPath\$($d.DisplayName)" -ItemType Directory -Force | Out-Null;
