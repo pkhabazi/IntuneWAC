@@ -12,14 +12,10 @@ function Import-IntuneConfig {
     .Parameter SourceFilePath
         some info
 
-    .Parameter AuthToken
-        some info
+    Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\companyName
 
     .Example
-    Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\companyName -AuthToken $token
-
-    .Example
-    Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\companyName -AuthToken $token -verbose
+    Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\CondicioCloud
     #>
 
     [cmdletbinding(SupportsShouldProcess, ConfirmImpact = 'High')]
@@ -28,19 +24,18 @@ function Import-IntuneConfig {
         [bool]$AzDevOps,
 
         [Parameter(Mandatory)]
-        [string]$SourceFilePath,
-
-        [Parameter(Mandatory)]
-        [Hashtable]$AuthToken
+        [string]$SourceFilePath
     )
 
     begin {
+        precheckAuthToken
+
         if ($SourceFilePath) { $SourceFilePath = $SourceFilePath.TrimEnd('\') } else { $SourceFilePath = $PSScriptRoot } # what to do with else, set default path of trow error?
 
         # does path need any test, because get-childitem is in try catch below?
         $deviceConfigurationPath = "$SourceFilePath\configurationPolicies"
         $deviceCompliancePath = "$SourceFilePath\compliancePolicies"
-        $deviceScriptPath = "$SourceFilePath\$($config.client)\scripts"
+        $deviceScriptPath = "$SourceFilePath\scripts"
         $groupsPath = "$SourceFilePath\groups"
     }
 
@@ -60,7 +55,7 @@ function Import-IntuneConfig {
         ## end of try
 
         ## Begin of Device configuration upload to intune graph
-        Write-Verbose "Uploading Device configuration profiles to Intune.."
+        Write-Output "Uploading Device configuration profiles to Intune.."
         if ($deviceConfiguration.count -ge 1) {
             foreach ($item in $deviceConfiguration) {
                 $tmpJson = $null
@@ -68,7 +63,7 @@ function Import-IntuneConfig {
 
                 if (Test-Json $tmpJson) {
                     Write-Verbose "Valid Json content in $($item.FullName)"
-                    [psobject]$ReferenceTemplate = Get-DeviceManagementPolicy -AuthToken $token -ManagementType Configuration | Where-Object { $_.displayName -eq ((Get-Content $item.FullName | ConvertFrom-Json | Select-Object displayName).displayName) } | Select-Object * -ExcludeProperty id, lastModifiedDateTime, roleScopeTagIds, supportsScopeTags, createdDateTime, version, value
+                    [psobject]$ReferenceTemplate = Get-DeviceManagementPolicy -ManagementType Configuration | Where-Object { $_.displayName -eq ((Get-Content $item.FullName | ConvertFrom-Json | Select-Object displayName).displayName) } | Select-Object * -ExcludeProperty id, lastModifiedDateTime, roleScopeTagIds, supportsScopeTags, createdDateTime, version, value
 
                     if ($ReferenceTemplate) {
                         Write-Output "Configuration profile with name $($ReferenceTemplate.displayName) already exists, comparing to find difference"
@@ -78,7 +73,7 @@ function Import-IntuneConfig {
                             Write-Output ($comparePolicy | Format-Table | Out-String)
 
                             if ($PSCmdlet.ShouldProcess("Do you want to update profile: $($ReferenceTemplate.displayName)")) {
-                                $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Configuration
+                                $result = Push-DeviceManagementPolicy -json $tmpJson -managementType Configuration
                             }
                             else {
                                 Write-Output "No change have been made, deployment aborted"
@@ -87,7 +82,7 @@ function Import-IntuneConfig {
                     }
                     else {
                         Write-Verbose "Configuration profile doesn't exists online"
-                        $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Configuration
+                        $result = Push-DeviceManagementPolicy -json $tmpJson -managementType Configuration
                     }
 
                     if ($azDevOps) {
@@ -102,12 +97,12 @@ function Import-IntuneConfig {
             }
         }
         else {
-            Write-Verbose "No Device configuration profiles found in $($deviceConfigurationPath) for upload"
+            Write-Output "No Device configuration profiles found in $($deviceConfigurationPath) for upload"
         }
         ## End of Device configuration upload
 
         ## Begin of Device Compliance upload to intune graph
-        Write-Verbose "Uploading Device compliance policies to Intune.."
+        Write-Output "Uploading Device compliance policies to Intune.."
         if ($deviceCompliance.count -ge 1) {
             foreach ($item in $deviceConfiguration) {
                 $tmpJson = $null
@@ -115,7 +110,7 @@ function Import-IntuneConfig {
 
                 if (Test-Json $tmpJson) {
                     Write-Verbose "Valid Json content in $($item.FullName)"
-                    [psobject]$ReferenceTemplate = Get-DeviceManagementPolicy -AuthToken $token -ManagementType Compliance | Where-Object { $_.displayName -eq ((Get-Content $item.FullName | ConvertFrom-Json | Select-Object displayName).displayName) } | Select-Object * -ExcludeProperty id, lastModifiedDateTime, roleScopeTagIds, supportsScopeTags, createdDateTime, version, value
+                    [psobject]$ReferenceTemplate = Get-DeviceManagementPolicy -ManagementType Compliance | Where-Object { $_.displayName -eq ((Get-Content $item.FullName | ConvertFrom-Json | Select-Object displayName).displayName) } | Select-Object * -ExcludeProperty id, lastModifiedDateTime, roleScopeTagIds, supportsScopeTags, createdDateTime, version, value
 
                     if ($ReferenceTemplate) {
                         Write-Output "Compliance profile with name $($ReferenceTemplate.displayName) already exists, comparing to find difference"
@@ -125,7 +120,7 @@ function Import-IntuneConfig {
                             Write-Output ($comparePolicy | Format-Table | Out-String)
 
                             if ($PSCmdlet.ShouldProcess("Do you want to update profile: $($ReferenceTemplate.displayName)")) {
-                                $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Compliance
+                                $result = Push-DeviceManagementPolicy -Json $tmpJson -managementType Compliance
                             }
                             else {
                                 Write-Output "No change have been made, deployment aborted"
@@ -134,7 +129,7 @@ function Import-IntuneConfig {
                     }
                     else {
                         Write-Verbose "Compliance profile doesn't exists online"
-                        $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType Compliance
+                        $result = Push-DeviceManagementPolicy -json $tmpJson -managementType Compliance
                     }
 
                     if ($azDevOps) {
@@ -149,12 +144,12 @@ function Import-IntuneConfig {
             }
         }
         else {
-            Write-Verbose "No Device compliance policies found in $($deviceCompliancePath) for upload"
+            Write-Output "No Device compliance policies found in $($deviceCompliancePath) for upload"
         }
         ## End of Device Compliance upload
 
         ## Begin of Scripts upload to intune graph
-        Write-Verbose "Uploading scripts to Intune.."
+        Write-Output "Uploading scripts to Intune.."
         if ($deviceScript.count -ge 1) {
             foreach ($x in $deviceScriptPath) {
                 $tmpJson = $null
@@ -164,7 +159,7 @@ function Import-IntuneConfig {
                 $tmpScript = Get-Content "$($x.FullName)\$($x.Name).ps1" -raw
                 $tmpEncScript = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes("$tmpScript"))
                 $tmpJson | Add-Member -MemberType NoteProperty -Name "scriptContent" -Value $tmpEncScript
-                $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json ($tmpJson | ConvertTo-Json -Depth 100) -managementType Script
+                $result = Push-DeviceManagementPolicy -json ($tmpJson | ConvertTo-Json -Depth 100) -managementType Script
                 $result | ConvertTo-Yaml | Out-File -FilePath "$env:Temp\Script_$($x.Name -replace '.json','').yaml" -Encoding ascii -Force
 
                 if ($azDevOps) {
@@ -174,7 +169,7 @@ function Import-IntuneConfig {
             }
         }
         else {
-            Write-Verbose "No scripts found in $($deviceScriptPath) for upload"
+            Write-Output "No scripts found in $($deviceScriptPath) for upload"
         }
 
         ## Begin of Groups creation to intune graph
@@ -183,9 +178,19 @@ function Import-IntuneConfig {
                 $tmpJson = $null
                 $tmpJson = Get-Content $item.FullName -Raw
                 if (Test-Json $tmpJson) {
-                    $result = Push-DeviceManagementPolicy -AuthToken $AuthToken -json $tmpJson -managementType groups
-                    $result | ConvertTo-Yaml | Out-File -FilePath "$env:temp\Compliance_$($item.Name -replace '.json','').yaml" -Encoding ascii -Force
+                    [psobject]$ReferenceTemplate = Get-DeviceManagementPolicy -ManagementType groups | Where-Object { $_.displayName -eq ((Get-Content $item.FullName | ConvertFrom-Json | Select-Object displayName).displayName) } | Select-Object *
 
+                    if ($ReferenceTemplate.count -eq 1){
+                        Write-Output "Group $($ReferenceTemplate.displayName) alreaddy exists!"
+                        Write-Verbose ($ReferenceTemplate | Format-Table | Out-String)
+                    }
+                    elseif ($ReferenceTemplate.count -gt 2) {
+                        Write-Error "Found $($ReferenceTemplate.count) groups with the same name, fix manuelly before running code" -ErrorAction Stop
+                    }
+                    else {
+                        Write-Verbose "Group doesn't exists online, creating group..."
+                        $result = Push-DeviceManagementPolicy -Json $tmpJson -managementType Group
+                    }
                     if ($azDevOps) {
                         $compLog = "$env:temp\Compliance_$($x.Name -replace '.json','').yaml"
                         Write-Output "##vso[task.addattachment type=Distributedtask.Core.Summary;name=Device Compliance Policy - $($x.Name -replace '.json','');]$compLog"
@@ -194,7 +199,6 @@ function Import-IntuneConfig {
                 else {
                     Write-Error "JSON test filed for $($item.FullName)"
                 }
-
             }
         }
         else {

@@ -63,9 +63,6 @@ function Get-AuthToken {
         [string]$Authtype
     )
 
-    begin {
-    }
-
     process {
 
         $resourceUri = "https://graph.microsoft.com"
@@ -124,7 +121,7 @@ function Get-AuthToken {
 
                     Write-Verbose "Creating header for Authorization token"
 
-                    $authToken = @{
+                    $script:authToken = @{
                         'Content-Type'  = 'application/json'
                         'Authorization' = "Bearer " + $response.Access_Token
                         'ExpiresOn'     = ([timezone]::CurrentTimeZone.ToLocalTime(([datetime]'1/1/1970').AddSeconds($response.expires_on)))
@@ -132,8 +129,9 @@ function Get-AuthToken {
                         'refresh_token' = $response.refresh_token
                         'TenantId'      = $TenantId
                     }
-                    Write-Verbose $authToken
-                    return $authToken
+                    return $script:authToken
+                    Write-Verbose $script:authToken
+                    Write-Output "Successfully authenticated!"
                 }
                 else {
                     Write-Verbose $_
@@ -176,13 +174,14 @@ function Get-AuthToken {
 
                 Write-Verbose "Creating header for Authorization token"
 
-                $authToken = @{
+                $script:authToken = @{
                     'Content-Type'  = 'application/json'
                     'Authorization' = "Bearer " + $response.Access_Token
                     'ExpiresOn'     = $response.expires_in
                     'ExExpiresin'   = (Get-Date).ToUniversalTime().AddMinutes('60')
                 }
-                return $authToken
+                return $global:authToken
+                Write-Output "Successfully authenticated!"
             }
             else {
                 Write-Verbose $_

@@ -23,7 +23,7 @@ The function authenticate with the Graph API Interface using username and passwo
 
 ### EXAMPLE 1
 ```
-Get-authToken -clientId $clientId -clientSecret $clientSecret -tenantId $tenantId -Authtype Application
+Backup-Intune -Param $true
 ```
 
 Authenticates you with the Graph API interface

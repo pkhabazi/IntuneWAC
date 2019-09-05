@@ -13,7 +13,7 @@ This function is used to Export the current configuration
 ## SYNTAX
 
 ```
-Export-IntuneConfig [[-FilePath] <String>] [-ConfType] <String> [-AuthToken] <Hashtable> [<CommonParameters>]
+Export-IntuneConfig [[-FilePath] <String>] [-ConfType] <String> [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -23,14 +23,14 @@ The function exports the current configuration of Intune
 
 ### EXAMPLE 1
 ```
-Export-IntuneConfig -ConfType All -AuthToken $token -FilePath "C:\sources\pkm-intune\demo" -Verbose
+Export-IntuneConfig -ConfType Configuration -FilePath "C:\sources\pkm-intune\demo" -Verbose
 ```
 
 Export Current configuration to spicified folder
 
 ### EXAMPLE 2
 ```
-Export-IntuneConfig -ConfType All -AuthToken $token -FilePath "C:\sources\pkm-intune\demo"
+Export-IntuneConfig -ConfType All -FilePath "C:\sources\pkm-intune\demo"
 ```
 
 Export Current configuration with verbose support
@@ -62,21 +62,6 @@ Aliases:
 
 Required: True
 Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -AuthToken
-coming soon
-
-```yaml
-Type: Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False

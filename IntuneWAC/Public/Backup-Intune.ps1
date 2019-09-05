@@ -20,10 +20,10 @@ function Backup-Intune {
         [switch]$Param
     )
 
-    if ($Param) {
-        "Got param..."
+    begin {
+        precheckAuthToken
     }
-    else {
-        "No param..."
+    process {
+        Write-Output "coming soon"
     }
 }

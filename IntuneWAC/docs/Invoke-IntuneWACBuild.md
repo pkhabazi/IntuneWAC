@@ -24,12 +24,12 @@ This function is meant to generete the JSON files that will be uploaded to the g
 
 ### EXAMPLE 1
 ```
-Invoke-IntuneWACBuild -configFile .\examples\settings.json -templatePath .\templates -outputPath .\output -verbose
+Invoke-IntuneWACBuild -configFile .\examples\settings.json -templatePath .\examples\templates -OutputPath .\output -verbose
 ```
 
 ### EXAMPLE 2
 ```
-Invoke-IntuneWACBuild -configFile .\settings.json
+Invoke-IntuneWACBuild -ConfigFile ".\examples\settings.json" -templatePath ".\examples\templates" -OutputPath ".\output"
 ```
 
 ## PARAMETERS

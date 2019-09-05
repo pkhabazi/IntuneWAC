@@ -13,8 +13,7 @@ some info
 ## SYNTAX
 
 ```
-Import-IntuneConfig [-AzDevOps] <Boolean> [-SourceFilePath] <String> [-AuthToken] <Hashtable> [-WhatIf]
- [-Confirm] [<CommonParameters>]
+Import-IntuneConfig [-AzDevOps] <Boolean> [-SourceFilePath] <String> [-WhatIf] [-Confirm] [<CommonParameters>]
 ```
 
 ## DESCRIPTION
@@ -24,12 +23,7 @@ some info
 
 ### EXAMPLE 1
 ```
-Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\companyName -AuthToken $token
-```
-
-### EXAMPLE 2
-```
-Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\companyName -AuthToken $token -verbose
+Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\CondicioCloud
 ```
 
 ## PARAMETERS
@@ -52,6 +46,8 @@ Accept wildcard characters: False
 ### -SourceFilePath
 some info
 
+Import-IntuneConfig -azDevOps $false -SourceFilePath .\output\companyName
+
 ```yaml
 Type: String
 Parameter Sets: (All)
@@ -59,21 +55,6 @@ Aliases:
 
 Required: True
 Position: 2
-Default value: None
-Accept pipeline input: False
-Accept wildcard characters: False
-```
-
-### -AuthToken
-some info
-
-```yaml
-Type: Hashtable
-Parameter Sets: (All)
-Aliases:
-
-Required: True
-Position: 3
 Default value: None
 Accept pipeline input: False
 Accept wildcard characters: False
